@@ -31,7 +31,11 @@ test("demo flow: login, ask a question tagged to the sample project, see the ans
   await page.locator("#password").fill(PASSWORD!);
   await page.getByRole("button", { name: "Sign In" }).click();
   await page.waitForURL(/\/dashboard/);
-  await expect(page.getByText(/Welcome back/i)).toBeVisible();
+  // Not getByText(/Welcome back/i): a "Welcome back!" toast and the route
+  // announcer div both also match that text, making a plain text locator
+  // ambiguous under Playwright's strict mode. The dashboard heading is the
+  // one that actually confirms the page loaded.
+  await expect(page.getByRole("heading", { name: /Welcome back/i })).toBeVisible();
 
   // 2. Go ask a question, tagged to the sample client project.
   await page.goto("/#try-it");
@@ -43,8 +47,11 @@ test("demo flow: login, ask a question tagged to the sample project, see the ans
 
   // 3. See the final answer and its metrics (this app surfaces the merged
   // ensemble answer plus aggregate scores, not a per-candidate breakdown --
-  // see src/app/page.tsx).
-  await expect(page.getByText("Best Answer")).toBeVisible({ timeout: 45_000 });
+  // see src/app/page.tsx). Scoped to the "Best Answer" result heading (an
+  // <h2>) specifically: the homepage's own static marketing copy also
+  // contains "Best Answer Selection" and "Best Answer Returned", which a
+  // plain text locator matches too under Playwright's strict mode.
+  await expect(page.getByRole("heading", { name: "Best Answer", exact: true })).toBeVisible({ timeout: 45_000 });
   await expect(page.getByText("Confidence")).toBeVisible();
 
   // 4. Open Analytics filtered to that project and confirm the query shows up.
