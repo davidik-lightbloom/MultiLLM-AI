@@ -1777,12 +1777,17 @@ def build_ensemble_answer(
             synthesis_provider = provider
             break
 
+    citation_rule = (
+        "- Keep citations like [S1] when factual claims are retained.\n"
+        if sources
+        else "- No local sources were used for this answer -- do not invent or keep any [S#] citation.\n"
+    )
     synthesis_prompt = (
         "You are the final judge. Merge the best parts of candidate answers into one superior response.\n"
         "Rules:\n"
         "- Keep only claims with source support or mark as uncertain.\n"
         "- Preserve balanced framing to reduce bias.\n"
-        "- Keep citations like [S1] when factual claims are retained.\n"
+        f"{citation_rule}"
         "- If candidates conflict, explain the conflict briefly.\n\n"
         f"User question:\n{redact_sensitive(user_input) if privacy_redaction else user_input}\n\n"
         "Candidate answers:\n"
@@ -1900,12 +1905,17 @@ def build_ensemble_answer_stream(
             synthesis_provider = provider
             break
 
+    citation_rule = (
+        "- Keep citations like [S1] when factual claims are retained.\n"
+        if sources
+        else "- No local sources were used for this answer -- do not invent or keep any [S#] citation.\n"
+    )
     synthesis_prompt = (
         "You are the final judge. Merge the best parts of candidate answers into one superior response.\n"
         "Rules:\n"
         "- Keep only claims with source support or mark as uncertain.\n"
         "- Preserve balanced framing to reduce bias.\n"
-        "- Keep citations like [S1] when factual claims are retained.\n"
+        f"{citation_rule}"
         "- If candidates conflict, explain the conflict briefly.\n\n"
         f"User question:\n{redact_sensitive(user_input) if privacy_redaction else user_input}\n\n"
         "Candidate answers:\n"
