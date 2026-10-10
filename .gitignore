@@ -42,6 +42,8 @@ next-env.d.ts
 *.tsbuildinfo
 vercel-deployment/.next/
 vercel-deployment/node_modules/
+vercel-deployment/test-results/
+vercel-deployment/playwright-report/
 
 # Trained model artifacts (reproducible via python -m train.train)
 models/

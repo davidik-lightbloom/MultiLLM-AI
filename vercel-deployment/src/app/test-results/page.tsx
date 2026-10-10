@@ -37,7 +37,7 @@ export default function TestResultsPage() {
 
       <div className="grid sm:grid-cols-3 gap-4 mb-12">
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 text-center">
-          <div className="text-3xl font-bold text-emerald-600">45/45</div>
+          <div className="text-3xl font-bold text-emerald-600">76/76</div>
           <div className="text-sm text-slate-500 mt-1">Unit tests passing</div>
         </div>
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 text-center">

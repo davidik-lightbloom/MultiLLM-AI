@@ -1,13 +1,16 @@
 # Test Results
 
-*Generated 2026-09-23, real run on this machine (CPU-only, no MPS/CUDA).
+*Model-eval numbers below generated 2026-09-23, real run on this machine
+(CPU-only, no MPS/CUDA); test count refreshed 2026-10-10.
 Reproduce with `pytest -q`, `python -m train.eval_models`.*
 
 ## Test suite
 
-**45/45 tests passing** (`pytest -q`) — covers `ai_client.py` core
-scoring/redaction/key-loading/ensemble logic, `token_optimizer.py`, and
-`train/prompt_refiner_data.py`.
+**76/76 tests passing** (`pytest -q`) — covers `ai_client.py` core
+scoring/redaction/key-loading/ensemble logic, `token_optimizer.py`,
+`train/prompt_refiner_data.py`, per-provider timeouts/streaming
+(`test_provider_timeouts.py`, `test_stream_timeout.py`), and prompt routing
+(`test_prompt_router.py`).
 
 ## Trained models (from scratch, this run)
 
