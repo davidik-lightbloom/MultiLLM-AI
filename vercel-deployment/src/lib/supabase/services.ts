@@ -406,16 +406,6 @@ export async function getSubscription(userId: string): Promise<Subscription | nu
   return data;
 }
 
-export async function getSubscriptionByCustomer(customerId: string): Promise<Subscription | null> {
-  const { data, error } = await supabaseServer
-    .from('subscriptions')
-    .select('*')
-    .eq('stripe_customer_id', customerId)
-    .single();
-  if (error) return null;
-  return data;
-}
-
 export async function upsertSubscription(subscription: Database['public']['Tables']['subscriptions']['Insert']): Promise<Subscription | null> {
   const { data, error } = await supabaseServer
     .from('subscriptions')

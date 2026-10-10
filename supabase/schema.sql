@@ -102,12 +102,16 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS credits_period_start TIMEST
 -- no profile row to attach it to.
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS local_only_mode BOOLEAN NOT NULL DEFAULT FALSE;
 
--- Subscriptions (Stripe)
+-- Subscriptions (billing is a manual, email-based flow -- see
+-- dashboard/billing/page.tsx -- not Stripe; the stripe_customer_id /
+-- stripe_subscription_id columns + idx_subscriptions_stripe_customer index
+-- from an earlier, since-removed Stripe integration are intentionally gone.
+-- Pending: this drop still needs to be applied to the live project via
+-- apply_migration -- see the matching migration name
+-- "drop_unused_stripe_subscription_columns" once it's run.
 CREATE TABLE IF NOT EXISTS public.subscriptions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    stripe_customer_id TEXT NOT NULL UNIQUE,
-    stripe_subscription_id TEXT UNIQUE,
     plan TEXT NOT NULL DEFAULT 'free' CHECK (plan IN ('free', 'pro', 'enterprise')),
     status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'canceled', 'past_due', 'trialing')),
     current_period_end TIMESTAMPTZ,
@@ -121,7 +125,6 @@ CREATE INDEX IF NOT EXISTS idx_profiles_email ON public.profiles(email);
 CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON public.api_keys(user_id);
 CREATE INDEX IF NOT EXISTS idx_queries_user_created ON public.queries(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_training_jobs_user_status ON public.training_jobs(user_id, status);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_customer ON public.subscriptions(stripe_customer_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON public.subscriptions(user_id);
 
 -- Row Level Security
