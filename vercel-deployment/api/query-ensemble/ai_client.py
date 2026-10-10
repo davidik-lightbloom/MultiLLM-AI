@@ -219,6 +219,62 @@ STOPWORDS = {
     "while",
     "after",
     "before",
+    # Short, very common function words -- originally missing here, which let
+    # BM25 retrieval treat any two prompts as "related" purely because they
+    # both contain "is"/"of"/etc, since TOKEN_RE's 2-char minimum doesn't
+    # filter them on its own. Without these, a query entirely outside this
+    # app's own knowledge_sources/ corpus (e.g. "What is the capital of
+    # France?") still matched chunks via "is"/"of" alone, so the ensemble
+    # treated irrelevant local docs as real context and refused to answer.
+    "is",
+    "are",
+    "was",
+    "were",
+    "been",
+    "being",
+    "be",
+    "am",
+    "do",
+    "does",
+    "did",
+    "of",
+    "in",
+    "on",
+    "at",
+    "by",
+    "to",
+    "a",
+    "an",
+    "it",
+    "its",
+    "as",
+    "or",
+    "not",
+    "no",
+    "so",
+    "if",
+    "but",
+    "up",
+    "out",
+    "we",
+    "you",
+    "i",
+    "he",
+    "she",
+    "they",
+    "my",
+    "our",
+    "us",
+    "all",
+    "any",
+    "each",
+    "how",
+    "why",
+    "who",
+    "whom",
+    "can",
+    "could",
+    "should",
 }
 
 TOKEN_RE = re.compile(r"[A-Za-z0-9_]{2,}")
@@ -1318,7 +1374,11 @@ class SourceIndex:
 
 def format_sources_for_prompt(sources: Sequence[SourceChunk]) -> str:
     if not sources:
-        return "No local sources available."
+        return (
+            "No local sources are relevant to this question. Answer from your own general "
+            "knowledge instead -- do not refuse just because there's no local document to cite, "
+            "and don't claim local-source support you don't have."
+        )
     lines = []
     for item in sources:
         lines.append(f"[{item.source_id}] {item.path.name}: {item.text[:700]}")
