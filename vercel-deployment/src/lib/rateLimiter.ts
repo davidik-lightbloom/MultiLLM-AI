@@ -1,7 +1,8 @@
 /**
  * Rate limiter with two backends:
- *  - Upstash Redis (REST API) when UPSTASH_REDIS_REST_URL/TOKEN are set --
- *    shared across every serverless instance, survives cold starts.
+ *  - Upstash Redis (REST API) when UPSTASH_REDIS_REST_URL/TOKEN (or the
+ *    Vercel Marketplace "Upstash for Redis" product's KV_REST_API_URL/TOKEN)
+ *    are set -- shared across every serverless instance, survives cold starts.
  *  - An in-memory, per-process Map otherwise (the original behavior) -- a
  *    real, cheap first line of defense, but only bounds *each* instance, not
  *    the account globally.
@@ -74,8 +75,14 @@ function checkBucketMemory(store: Map<string, Bucket>, key: string, limit: numbe
 
 // ---- Upstash Redis backend (optional) ----
 
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+// The Vercel Marketplace's "Upstash for Redis" product (installed via
+// `vercel integration add upstash/upstash-kv`) injects these as
+// KV_REST_API_URL/KV_REST_API_TOKEN -- a holdover from the now-sunset
+// @vercel/kv naming -- not the raw Upstash UPSTASH_REDIS_REST_* names.
+// Support both so either provisioning path (Marketplace or a hand-created
+// Upstash database) works without renaming anything.
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 const USE_REDIS = Boolean(UPSTASH_URL && UPSTASH_TOKEN);
 
 async function upstashCommand(...args: (string | number)[]): Promise<any> {

@@ -399,8 +399,11 @@ class _RedisKeyHealth:
 
 
 def _build_key_health_backend() -> "_InMemoryKeyHealth | _RedisKeyHealth":
-    url = os.environ.get("UPSTASH_REDIS_REST_URL", "").strip()
-    token = os.environ.get("UPSTASH_REDIS_REST_TOKEN", "").strip()
+    # The Vercel Marketplace "Upstash for Redis" product injects
+    # KV_REST_API_URL/TOKEN (a holdover from the sunset @vercel/kv naming),
+    # not the raw Upstash UPSTASH_REDIS_REST_* names -- check both.
+    url = (os.environ.get("UPSTASH_REDIS_REST_URL") or os.environ.get("KV_REST_API_URL") or "").strip()
+    token = (os.environ.get("UPSTASH_REDIS_REST_TOKEN") or os.environ.get("KV_REST_API_TOKEN") or "").strip()
     if url and token and httpx is not None:
         return _RedisKeyHealth(url, token)
     return _InMemoryKeyHealth()

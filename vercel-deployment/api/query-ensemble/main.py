@@ -83,8 +83,9 @@ async def require_internal_secret(request: Request, call_next):
 # coarse per-caller cap in case that layer is bypassed or misbehaves (e.g. a
 # retry storm).
 #
-# Backed by Upstash Redis (REST API) when UPSTASH_REDIS_REST_URL/TOKEN are
-# set -- shared across every serverless instance -- and by an in-memory,
+# Backed by Upstash Redis (REST API) when UPSTASH_REDIS_REST_URL/TOKEN (or
+# the Vercel Marketplace "Upstash for Redis" product's KV_REST_API_URL/TOKEN)
+# are set -- shared across every serverless instance -- and by an in-memory,
 # per-process dict otherwise. Mirrors vercel-deployment/src/lib/rateLimiter.ts
 # on the Next.js side; keep both in sync. Redis being unreachable fails OPEN
 # (the request is allowed) rather than blocking every request on a
@@ -93,8 +94,11 @@ _rate_buckets: Dict[str, Dict[str, float]] = {}
 _RATE_WINDOW_SECONDS = 60.0
 QUERY_RATE_LIMIT_PER_MINUTE = parse_int_env("QUERY_RATE_LIMIT_PER_MINUTE", default=1000, minimum=1, maximum=100000)
 
-UPSTASH_URL = os.environ.get("UPSTASH_REDIS_REST_URL", "").rstrip("/")
-UPSTASH_TOKEN = os.environ.get("UPSTASH_REDIS_REST_TOKEN", "")
+# The Vercel Marketplace "Upstash for Redis" product injects
+# KV_REST_API_URL/TOKEN (a holdover from the sunset @vercel/kv naming), not
+# the raw Upstash UPSTASH_REDIS_REST_* names -- check both.
+UPSTASH_URL = (os.environ.get("UPSTASH_REDIS_REST_URL") or os.environ.get("KV_REST_API_URL") or "").rstrip("/")
+UPSTASH_TOKEN = os.environ.get("UPSTASH_REDIS_REST_TOKEN") or os.environ.get("KV_REST_API_TOKEN") or ""
 USE_REDIS_RATE_LIMIT = bool(UPSTASH_URL and UPSTASH_TOKEN)
 
 
