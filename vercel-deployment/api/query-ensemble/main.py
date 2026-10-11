@@ -20,6 +20,7 @@ import os
 import time
 import uuid
 
+import sentry_sdk
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -50,6 +51,15 @@ CARBON_G_PER_1K_TOKENS = 0.5
 logger = logging.getLogger("query_ensemble")
 if not logger.handlers:
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
+
+# Shares the same Sentry project as the Next.js app (NEXT_PUBLIC_SENTRY_DSN
+# is a plain project-wide Vercel env var, readable here too) -- failures in
+# this service are at least as important to see as the frontend's, and it's
+# the one actually calling flaky third-party LLM providers. No-ops locally
+# when the var isn't set. tracesSampleRate 0 for the same reason as the
+# Next.js side: errors only, not full APM, on a free-tier project.
+if os.environ.get("NEXT_PUBLIC_SENTRY_DSN"):
+    sentry_sdk.init(dsn=os.environ["NEXT_PUBLIC_SENTRY_DSN"], traces_sample_rate=0)
 
 app = FastAPI(title="MultiLLM Ensemble API")
 
@@ -337,6 +347,7 @@ async def query_ensemble(request: QueryRequest, http_request: Request):
         raise HTTPException(status_code=503, detail=f"{e} (request_id={request_id})")
     except Exception as e:
         logger.error("request %s failed: %s", request_id, e)
+        sentry_sdk.capture_exception(e)
         raise HTTPException(status_code=500, detail=f"{e} (request_id={request_id})")
 
 
@@ -437,6 +448,10 @@ async def query_ensemble_stream(request: QueryRequest, http_request: Request):
             yield f"data: {json.dumps({'event': 'error', 'code': 'no_remote_provider_answered', 'detail': str(e), 'request_id': request_id})}\n\n"
         except Exception as e:
             logger.error("stream request %s failed: %s", request_id, e)
+            # This generator never re-raises (it yields an SSE error event and
+            # ends normally instead), so Sentry's FastAPI auto-instrumentation
+            # never sees this failure unless reported explicitly here.
+            sentry_sdk.capture_exception(e)
             yield f"data: {json.dumps({'event': 'error', 'detail': str(e), 'request_id': request_id})}\n\n"
 
     return StreamingResponse(

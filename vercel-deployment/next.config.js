@@ -50,4 +50,18 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+// @sentry/nextjs v11 moved the build-time config helper to this subpath --
+// it's no longer re-exported from the package root.
+const { withSentryConfig } = require("@sentry/nextjs/config");
+
+// org/project/authToken are read from SENTRY_ORG/SENTRY_PROJECT/
+// SENTRY_AUTH_TOKEN env vars automatically (set by the Vercel Marketplace
+// Sentry integration) -- no need to pass them here. Source map upload is a
+// webpack-only feature of this plugin; under Turbopack (Next 16's default
+// bundler) it no-ops, so errors still report without mapped stack traces
+// until Sentry's Turbopack support lands -- see src/instrumentation.ts and
+// src/instrumentation-client.ts for the actual error-capture wiring.
+module.exports = withSentryConfig(nextConfig, {
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+});
