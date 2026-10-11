@@ -1652,6 +1652,14 @@ def _generate_candidates(
                 c_score = 0.0
                 total = 0.0
                 provider_failures.append({"provider_name": provider_name, "bot_name": bot_name, "reason": reason})
+                # classify_failure() deliberately sanitizes `reason` before it
+                # reaches the API response (never the raw exception -- see its
+                # docstring), which also means operators have no way to see
+                # *why* a bot failed from the response alone. Log the real
+                # exception server-side only (Vercel function logs / Sentry
+                # via ai_client's "ai_client" logger propagating to root --
+                # see main.py's logging.basicConfig), not returned to callers.
+                logger.error("bot %r (%s) failed: %s", bot_name, provider_name, exc, exc_info=exc)
 
             candidates.append(
                 Candidate(
