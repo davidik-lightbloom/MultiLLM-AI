@@ -161,27 +161,40 @@ invokes the Python function). The Next.js app calls it privately via a
 service binding (`PYTHON_ENSEMBLE_INTERNAL_URL`, injected automatically by
 Vercel -- never set it as a project env var), not a public URL. Its
 dependencies (`ai_client.py`, `local_models.py`, `token_optimizer.py`,
-`knowledge_sources/`) are vendored copies inside
-`vercel-deployment/api/query-ensemble/`, kept in sync manually with the
-repo-root originals, since this project's Vercel Root Directory is
-`vercel-deployment/` and a deployed function can't read files above it.
-The trained model weights this function needs for local-only mode (Feature
-4) are committed alongside it at `api/query-ensemble/models/` (~11MB) --
-see the `.gitignore` carve-out and the comment on `MODELS_DIR` in
+`prompt_router.py`, `knowledge_sources/`, and now `train/model.py` -- see
+below) are vendored copies inside `vercel-deployment/api/query-ensemble/`,
+kept in sync manually with the repo-root originals, since this project's
+Vercel Root Directory is `vercel-deployment/` and a deployed function can't
+read files above it. **This is a recurring footgun**: local-only mode
+broke in production three separate ways from this one root cause before it
+actually worked (2026-10-11) -- missing model weights, missing `torch`,
+and finally a missing `train/model.py` (local_models.py's `from
+train.model import TinyGPT/TinyScorer/WordTokenizer` had no vendored copy
+to resolve against). The last one was invisible in every local test
+because this dev machine has `multillm-ensemble` installed editable,
+which makes the repo-root `train` package importable from anywhere on it
+regardless of cwd -- silently masking the exact gap that broke production.
+**When testing this function locally, don't trust a green result alone;
+check it still works in an environment without the editable install, or
+just watch production logs after deploying.** The trained model weights
+are committed alongside it at `api/query-ensemble/models/` (~11MB) -- see
+the `.gitignore` carve-out and the comment on `MODELS_DIR` in
 `local_models.py`; the repo-root `models/` directory stays gitignored and
 is just this function's local build source.
 
-**This function now bundles `torch` (CPU wheel, ~800MB) for local-only
-mode** -- added 2026-10-11, after the repo's own earlier experience with
+**This function now bundles `torch` (CPU wheel) for local-only mode** --
+added 2026-10-11, after the repo's own earlier experience with
 `training-job` hitting Vercel's old 500MB Python function limit (see
-"Known gap" below). This session's Vercel platform guidance says Functions
-now support bundles up to 5GB natively, which is why this was judged safe
-to add here too -- but that claim hasn't been verified against an actual
-deploy of *this* function yet. **Watch the first preview deploy after this
-change closely** for the same `ENOENT`-at-packaging failure mode
-`training-job` hit; if it recurs, local-only mode needs the same "move off
-Vercel" treatment discussed below for `training-job`, not more retries of
-the same approach.
+"Known gap" below) and the large-functions beta's `ENOENT` packaging bug.
+Confirmed via an actual production deploy: the build log shows `Function
+"main.py" exceeds the standard size limit; enabling large functions
+(beta)` -- the project already has `VERCEL_SUPPORT_LARGE_FUNCTIONS` set
+from the earlier `training-job` work, and this time it packaged and
+deployed cleanly (`services/backend/fastapi` came out at 279.67MB per
+`vercel inspect`), with no repeat of the `ENOENT` bug. That's a data point
+in this project's specific case, not proof the underlying platform bug is
+fixed -- if a future dependency bump reintroduces it, this is the function
+that will surface it next.
 
 - `POST /api/query` - Direct ensemble query
 - `GET /api/health` - Health check
@@ -266,6 +279,8 @@ seconds, not minutes.
 | `PRIVACY_REDACTION` | No | Enable PII redaction (default: 1) |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Strongly recommended in production | Shared, cross-instance rate limiting *and* the ensemble's key-drain circuit breaker (below); without these, both fall back to per-serverless-instance memory, far weaker under horizontal scaling |
 | `KEY_DRAIN_COOLDOWN_SECONDS` | No | How long a provider API key that just got rate-limited is skipped before being retried (default: 300). Uses `UPSTASH_REDIS_REST_URL`/`TOKEN` above when set, so the drain mark is shared across instances; otherwise in-memory per instance. See "API key rotation on rate limits" below |
+| `CRON_SECRET` | Yes, for lifecycle emails | Set in production as of 2026-10-11. Without it, `/api/cron/plan-expiring` 401s itself on every invocation (including Vercel's own scheduled one), so the plan-expiring reminder email silently never sends. Remember env var changes need a redeploy to take effect -- Vercel doesn't hot-reload them into an already-built function |
+| `RESEND_API_KEY` / `EMAIL_FROM` | **Not set in production as of 2026-10-11** | Required for any lifecycle email (welcome, low-credits, plan-expiring) to actually send. `src/lib/email.ts` throws loudly rather than silently dropping when missing *and* `APP_ENV=production` (which it is) -- so every lifecycle email attempt is currently failing (caught by each call site, doesn't break the request, but nothing is reaching real users). Needs a real Resend account; known gap, not yet resolved |
 
 ---
 
