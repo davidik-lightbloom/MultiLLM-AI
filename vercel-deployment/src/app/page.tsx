@@ -5,6 +5,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Shield, Cpu, Globe, ArrowRight, BarChart2, Layers, Target, Brain, CheckCircle2, Sparkles, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { SustainabilityMetrics } from "@/types/multi-llm";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { consumeEnsembleStream } from "@/lib/consumeSseStream";
@@ -385,7 +387,9 @@ export default function HomePage() {
                 </h2>
               </div>
               {streamingAnswer && (
-                <p className="text-slate-700 whitespace-pre-wrap leading-relaxed">{streamingAnswer}</p>
+                <div className="prose prose-slate max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingAnswer}</ReactMarkdown>
+                </div>
               )}
             </div>
           </motion.section>
@@ -409,9 +413,9 @@ export default function HomePage() {
                   Ensemble Selected
                 </span>
               </div>
-              <p className="text-slate-700 whitespace-pre-wrap leading-relaxed mb-6">
-                {result.answer}
-              </p>
+              <div className="prose prose-slate max-w-none mb-6">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.answer}</ReactMarkdown>
+              </div>
 
               {result.refined_prompt && (
                 <p className="text-xs text-slate-500 mb-6 flex items-center gap-1">
