@@ -52,7 +52,10 @@ test("demo flow: login, ask a question tagged to the sample project, see the ans
   // contains "Best Answer Selection" and "Best Answer Returned", which a
   // plain text locator matches too under Playwright's strict mode.
   await expect(page.getByRole("heading", { name: "Best Answer", exact: true })).toBeVisible({ timeout: 45_000 });
-  await expect(page.getByText("Confidence")).toBeVisible();
+  // exact: true -- getByText's default substring match is case-insensitive,
+  // so a plain "Confidence" also matches the Deep Review checkbox's label
+  // ("...for a confidence score").
+  await expect(page.getByText("Confidence", { exact: true })).toBeVisible();
 
   // 4. Open Analytics filtered to that project and confirm the query shows up.
   await page.goto("/dashboard/analytics");
