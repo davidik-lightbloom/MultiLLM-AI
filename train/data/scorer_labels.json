@@ -1,6 +1,6 @@
 [
  {
-  "text": "In conclusion I would like to say that According to [S3], Answers that present both sides of a tradeoff are less misleading.. The sources support the core claim, though edge cases may vary. The practical upshot is that answers that present both sides of a tradeoff are less misle... Key points:\n- Answers that present both sides of a tradeoff are less misleading.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S3], Answers that present both sides of a trad",
+  "text": "In conclusion I would like to say that According to [S3], Answers that present both sides of a tradeoff are less misleading.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that answers that present both sides of a tradeoff are less misle... Key points:\n- Answers that present both sides of a tradeoff are less misleading.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S3], Answers that present both",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -18,13 +18,13 @@
   "clarity_score": 0.74
  },
  {
-  "text": "In conclusion I would like to say that According to [S17], It can, but the source support score is lower.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that it can, but the source support score is lower.... Key points:\n- It can, but the source support score is lower.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S17], It can, but the source support score is lower.. The ",
+  "text": "In conclusion I would like to say that Summary: When no local sources match a question, the ensemble still answers using the providers' knowledge, but the source support score is capped lower. The system flags which parts are uncertain and encourages answers to present tradeoffs. Adding relevant files to knowledge_sources/ improves grounding over time.\n\nDetails: It can, but the source support score is lower.\n\nKey points:\n- It can, but the source support score is lower.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\n[S17] It can, b",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "When an answer uses a fact from a retrieved chunk, it includes a citation like [S1] or [S2] right after the claim. The citation maps to the source file the chunk came from. The source-support score also checks whether sentences share tokens with the cited chunks, so unsupported claims can be flagged.\n\nAnswers reference source chunks like [S1] and [S2] when they use them.\n\nKey points:\n- Answers reference source chunks like [S1] and [S2] when they use them.\n\n[S9] Answers reference source chunks like [S1] and [S2] when they use them.\n\nThis is supported by the available sources.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "When an answer uses a fact from a retrieved chunk, it includes a citation like [S1] or [S2] right after the claim. The citation maps to the source file the chunk came from. The source-support score also checks whether sentences share tokens with the cited chunks, so unsupported claims can be flagged.\n\nAnswers reference source chunks like [S1] and [S2] when they use them.\n\nKey points:\n- Answers reference source chunks like [S1] and [S2] when they use them.\n\n[S9] Answers reference source chunks like [S1] and [S2] when they use them.\n\nThis is supported by the available sources.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -54,7 +54,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "According to [S15], Different providers have different strengths and failure modes.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that different providers have different strengths and failure mod... Key points:\n- Different providers have different strengths and failure modes.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "According to [S15], Different providers have different strengths and failure modes.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that different providers have different strengths and failure mod... Key points:\n- Different providers have different strengths and failure modes.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -84,13 +84,13 @@
   "clarity_score": 0.74
  },
  {
-  "text": "Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a bounded candidate count. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a bounded candidate count. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
  },
  {
-  "text": "Each parallel bot is given a distinct persona, such as Factual Analyst or Risk Auditor, so the same question is answered from different angles. The personas are assigned round-robin across bots. This diversity is one reason the ensemble can catch blind spots that a single perspective would miss.\n\nPersonas are assigned to parallel bots to diversify answers.\n\nKey points:\n- Personas are assigned to parallel bots to diversify answers.\n\n[S34] Personas are assigned to parallel bots to diversify answers.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S34], Personas are assigned to parallel bots to diversify answers.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that personas are assigned to parallel bots to diversify answers.... Key points:\n- Personas are assigned to parallel bots to diversify answers.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -102,7 +102,7 @@
   "clarity_score": 0.45
  },
  {
-  "text": "According to [S3], Answers that present both sides of a tradeoff are less misleading.. The sources support the core claim, though edge cases may vary. The practical upshot is that answers that present both sides of a tradeoff are less misle... Key points:\n- Answers that present both sides of a tradeoff are less misleading.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S3], Answers that present both sides of a tradeoff are less misleading.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that answers that present both sides of a tradeoff are less misle... Key points:\n- Answers that present both sides of a tradeoff are less misleading.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -126,7 +126,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "In conclusion I would like to say that Each parallel bot is given a distinct persona, such as Factual Analyst or Risk Auditor, so the same question is answered from different angles. The personas are assigned round-robin across bots. This diversity is one reason the ensemble can catch blind spots that a single perspective would miss.\n\nPersonas are assigned to parallel bots to diversify answers.\n\nKey points:\n- Personas are assigned to parallel bots to diversify answers.\n\n[S34] Personas are assigned to parallel bots to diversify answers.\n\nThe evidence here is limited, so this should be read as u",
+  "text": "In conclusion I would like to say that According to [S34], Personas are assigned to parallel bots to diversify answers.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that personas are assigned to parallel bots to diversify answers.... Key points:\n- Personas are assigned to parallel bots to diversify answers.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S34], Personas are as",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -138,13 +138,13 @@
   "clarity_score": 0.7
  },
  {
-  "text": "In conclusion I would like to say that Clarity is measured by length and structure. Answers that are too short lack detail, while answers over a few hundred words lose focus. Structured answers that use short paragraphs or bullet lists score higher. A good answer states the main point first and adds detail only where it helps.\n\nConcise, structured answers with examples are the clearest.\n\nKey points:\n- Concise, structured answers with examples are the clearest.\n\n[S11] Concise, structured answers with examples are the clearest.\n\nThe sources support the core claim, though edge cases may vary.\n\nTr",
+  "text": "In conclusion I would like to say that Tradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\n\nClarity is measured by length and structure. Answers that are too short lack detail, while answers over a few hundred words lose focus. Structured answers that use short paragraphs or bullet lists score higher. A good answer states the main point first and adds detail only where it helps.\n\n[S11] Concise, structured answers with examples are the clearest.\n\nKey points:\n- Concise, structured answers with examples are the clearest.\n\nThe evidence here is l",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "Privacy redaction scans prompts and answers for sensitive patterns such as emails, phone numbers, credit card numbers, and API keys. When a pattern matches, the text is replaced with a [REDACTED] marker before it is sent to remote APIs. This keeps private identifiers out of third-party request logs. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Privacy redaction scans prompts and answers for sensitive patterns such as emails, phone numbers, credit card numbers, and API keys. When a pattern matches, the text is replaced with a [REDACTED] marker before it is sent to remote APIs. This keeps private identifiers out of third-party request logs. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -156,7 +156,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "Using multiple providers reduces correlated failure. If one provider is overloaded or has a policy that blocks a question, another provider can still produce a candidate. The ensemble also scores each candidate so that a single provider's weakness does not dominate the final answer. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Using multiple providers reduces correlated failure. If one provider is overloaded or has a policy that blocks a question, another provider can still produce a candidate. The ensemble also scores each candidate so that a single provider's weakness does not dominate the final answer. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -168,13 +168,13 @@
   "clarity_score": 0.8
  },
  {
-  "text": "According to [S17], It can, but the source support score is lower.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that it can, but the source support score is lower.... Key points:\n- It can, but the source support score is lower.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Summary: When no local sources match a question, the ensemble still answers using the providers' knowledge, but the source support score is capped lower. The system flags which parts are uncertain and encourages answers to present tradeoffs. Adding relevant files to knowledge_sources/ improves grounding over time.\n\nDetails: It can, but the source support score is lower.\n\nKey points:\n- It can, but the source support score is lower.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\n[S17] It can, but the source support score is lower.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S23], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S23], Fact-based questions with local sources get the best results.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that fact-based questions with local sources get the best results... Key points:\n- Fact-based questions with loc",
+  "text": "According to [S23], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Questions that can be answered from the knowledge_sources/ directory produce the highest quality answers. The ensemble also handles open-ended questions well by presenting multiple perspectives. Complex multi-part questions may need to be broken down for optimal results.\n\nDeta",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -204,7 +204,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S17], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S17], It can, but the source support score is lower.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that it can, but the source support score is lower.... Key points:\n- It can, but the source support score is lower.\n\nTradeoff: ",
+  "text": "According to [S17], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: When no local sources match a question, the ensemble still answers using the providers' knowledge, but the source support score is capped lower. The system flags which parts are uncertain and encourages answers to present tradeoffs. Adding relevant files to knowledge_sources/ ",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -216,7 +216,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "According to [S7], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. The platform tracks an estimated carbon footprint for each query as a sustainability metric. It is one input among several; answer quality, latency, and cost are the primary selection criteria. The carbon estimate should be treated as approximate rather than an audited measurement.\n\nThe",
+  "text": "According to [S7], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S7], The sustainability layer tracks estimated carbon usage of each query.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the sustainability layer tracks estimated carbon usage of ea... Key points:\n- The sustainability laye",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -228,7 +228,7 @@
   "clarity_score": 0.45
  },
  {
-  "text": "When candidates disagree, the synthesis step compares their claims against source support. Conflicts are noted explicitly in the final answer, with the most well-supported perspective given priority. The judge also looks for common ground and presents balanced tradeoffs where models have different but valid viewpoints.\n\nThe synthesis step identifies and resolves conflicts between candidates.\n\nKey points:\n- The synthesis step identifies and resolves conflicts between candidates.\n\n[S22] The synthesis step identifies and resolves conflicts between candidates.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S22], The synthesis step identifies and resolves conflicts between candidates.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the synthesis step identifies and resolves conflicts between... Key points:\n- The synthesis step identifies and resolves conflicts between candidates.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -252,7 +252,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "In conclusion I would like to say that According to [S16], The system redacts patterns like emails and keys.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that the system redacts patterns like emails and keys.... Key points:\n- The system redacts patterns like emails and keys.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S16], The system redacts patterns like emails and keys.. Both inte",
+  "text": "In conclusion I would like to say that If a candidate answer contains sensitive patterns, the synthesis step redacts them before showing the final answer. Detection covers emails, phone numbers, credit card numbers, and API key formats. Redaction is best-effort, so users should still review answers for private data.\n\nThe system redacts patterns like emails and keys.\n\nKey points:\n- The system redacts patterns like emails and keys.\n\n[S16] The system redacts patterns like emails and keys.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: a quick answer is useful, a th",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -288,7 +288,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "In conclusion I would like to say that According to [S10], Training starts from scratch; fine-tuning starts from a pretrained checkpoint.. The sources support the core claim, though edge cases may vary. The practical upshot is that training starts from scratch; fine-tuning starts from a pret... Key points:\n- Training starts from scratch; fine-tuning starts from a pretrained checkpoint.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According",
+  "text": "In conclusion I would like to say that Training a model from scratch initializes random weights and learns everything from the corpus. Fine-tuning starts from an already pretrained checkpoint and only adapts it to a narrower task. From-scratch training needs more data and compute, but fine-tuning risks inheriting the base model's biases.\n\nTraining starts from scratch; fine-tuning starts from a pretrained checkpoint.\n\nKey points:\n- Training starts from scratch; fine-tuning starts from a pretrained checkpoint.\n\n[S10] Training starts from scratch; fine-tuning starts from a pretrained checkpoint.\n",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -300,7 +300,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "In conclusion I would like to say that Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synthesis.\n\nPersonas encourage diverse perspectives in candidate answers.\n\nKey points:\n- Personas encourage diverse perspectives in candidate answers.\n\n[S27] Personas encourage diverse perspectives in candidate answers.\n\nThe evidence here is limited, so this should be read as uncertain.\n",
+  "text": "In conclusion I would like to say that Summary: Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synthesis.\n\nDetails: Personas encourage diverse perspectives in candidate answers.\n\nKey points:\n- Personas encourage diverse perspectives in candidate answers.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S27] Personas",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -324,13 +324,13 @@
   "clarity_score": 0.7
  },
  {
-  "text": "Yes. You can drop supported files, like .txt, .md, or .csv, into the knowledge_sources folder and run /reload. The system chunks each file and indexes the tokens so future questions can retrieve the most relevant passages and cite them as [S1], [S2], and so on.\n\nDrop supported text files into the knowledge_sources folder.\n\nKey points:\n- Drop supported text files into the knowledge_sources folder.\n\n[S6] Drop supported text files into the knowledge_sources folder.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Summary: Yes. You can drop supported files, like .txt, .md, or .csv, into the knowledge_sources folder and run /reload. The system chunks each file and indexes the tokens so future questions can retrieve the most relevant passages and cite them as [S1], [S2], and so on.\n\nDetails: Drop supported text files into the knowledge_sources folder.\n\nKey points:\n- Drop supported text files into the knowledge_sources folder.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\n[S6] Drop supported text files into the knowledge_sources folder.\n\nThe sources support the core claim, though edge cases may vary.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S22], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. When candidates disagree, the synthesis step compares their claims against source support. Conflicts are noted explicitly in the final answer, with the most well-supported perspective given priority. The judge also looks for common ground and presents balanced tradeoffs where models ha",
+  "text": "According to [S22], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S22], The synthesis step identifies and resolves conflicts between candidates.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the synthesis step identifies and resolves conflicts between... Key points:\n- The synthesis step",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -354,7 +354,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "In conclusion I would like to say that The synthesis step evaluates each candidate's contributions independently. It keeps claims that have strong source support, preserves balanced framing, and explains where candidates disagreed. The final answer is a coherent whole rather than a patchwork, with citations maintained for traceability.\n\nThe judge extracts and combines the best parts from each candidate.\n\nKey points:\n- The judge extracts and combines the best parts from each candidate.\n\n[S25] The judge extracts and combines the best parts from each candidate.\n\nThe sources support the core claim",
+  "text": "In conclusion I would like to say that Summary: The synthesis step evaluates each candidate's contributions independently. It keeps claims that have strong source support, preserves balanced framing, and explains where candidates disagreed. The final answer is a coherent whole rather than a patchwork, with citations maintained for traceability.\n\nDetails: The judge extracts and combines the best parts from each candidate.\n\nKey points:\n- The judge extracts and combines the best parts from each candidate.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -366,7 +366,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "The default weights are 50% source support, 25% bias score, and 25% clarity score. These can be modified in the build_ensemble_answer function to prioritize different aspects. For example, increasing source support weight makes answers more conservative and fact-based. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "The default weights are 50% source support, 25% bias score, and 25% clarity score. These can be modified in the build_ensemble_answer function to prioritize different aspects. For example, increasing source support weight makes answers more conservative and fact-based. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -390,19 +390,19 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S34], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Each parallel bot is given a distinct persona, such as Factual Analyst or Risk Auditor, so the same question is answered from different angles. The personas are assigned round-robin across bots. This diversity is one reason the ensemble can catch blind spots that a single perspective w",
+  "text": "According to [S34], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S34], Personas are assigned to parallel bots to diversify answers.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that personas are assigned to parallel bots to diversify answers.... Key points:\n- Personas are assigned",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
  },
  {
-  "text": "According to [S38], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: The knowledge base indexes text-based files: plain text, Markdown, and CSV are read directly and split into chunks. Binary formats like PDFs or images are not parsed. Keeping sources in simple text formats makes retrieval fast and predictable, at the cost of not supporting ric",
+  "text": "According to [S38], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S38], Text-based formats like .txt, .md, and .csv are indexed.. The sources support the core claim, though edge cases may vary. The practical upshot is that text-based formats like .txt, .md, and .csv are indexed.... Key points:\n- Text-based formats like .txt, .md, and .c",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
  },
  {
-  "text": "According to [S37], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Each provider call is retried with backoff, and failed bots are excluded from ranking. If every configured provider is unavailable, the ensemble falls back to the local model when enabled, otherwise it returns a clear error. This total-failure case is rare because multiple pro",
+  "text": "According to [S37], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S37], The query returns an error unless a local fallback exists.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the query returns an error unless a local fallback exists.... Key points:\n- The query returns an error unless ",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -414,7 +414,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "When an answer uses a fact from a retrieved chunk, it includes a citation like [S1] or [S2] right after the claim. The citation maps to the source file the chunk came from. The source-support score also checks whether sentences share tokens with the cited chunks, so unsupported claims can be flagged. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "When an answer uses a fact from a retrieved chunk, it includes a citation like [S1] or [S2] right after the claim. The citation maps to the source file the chunk came from. The source-support score also checks whether sentences share tokens with the cited chunks, so unsupported claims can be flagged. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -438,7 +438,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "Custom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare retraining can leave the model stale. A sensible cadence is to retrain after major data updates and validate on a held-out set. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Custom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare retraining can leave the model stale. A sensible cadence is to retrain after major data updates and validate on a held-out set. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -480,13 +480,13 @@
   "clarity_score": 0.45
  },
  {
-  "text": "The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state the main point first and keep supporting detail tight.\n\nA clarity score penalizes answers that are too short or too long.\n\nKey points:\n- A clarity score penalizes answers that are too short or too long.\n\n[S39] A clarity score penalizes answers that are too short or too long.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Summary: The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state the main point first and keep supporting detail tight.\n\nDetails: A clarity score penalizes answers that are too short or too long.\n\nKey points:\n- A clarity score penalizes answers that are too short or too long.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S39] A clarity score penalizes answers that are too short or too long.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S35], Chunks are scored by BM25 against the question tokens.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that chunks are scored by bm25 against the question tokens.... Key points:\n- Chunks are scored by BM25 against the question tokens.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S35], Chunks are scored by BM25 against the question tokens.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that chunks are scored by bm25 against the question tokens.... Key points:\n- Chunks are scored by BM25 against the question tokens.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -504,7 +504,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "According to [S8], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nEach provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with the remain",
+  "text": "According to [S8], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nEach provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with th",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -522,7 +522,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synthesis. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synthesis. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -540,13 +540,13 @@
   "clarity_score": 0.45
  },
  {
-  "text": "According to [S24], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: The default weights are 50% source support, 25% bias score, and 25% clarity score. These can be modified in the build_ensemble_answer function to prioritize different aspects. For example, increasing source support weight makes answers more conservative and fact-based.\n\nDetail",
+  "text": "According to [S24], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S24], Yes, the scoring formula can be adjusted in the code.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that yes, the scoring formula can be adjusted in the code.... Key points:\n- Yes, the scoring formula can be adj",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
  },
  {
-  "text": "The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state the main point first and keep supporting detail tight. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state the main point first and keep supporting detail tight. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -576,13 +576,13 @@
   "clarity_score": 0.8
  },
  {
-  "text": "Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nAnswers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly supported and balanced, but a moderately detailed answer usually scores higher. The ensemble favors answers that state the main point and then support it.\n\n[S13] Very short answers get a lower clarity score.\n\nKey points:\n- Very short answers get a lower clarity score.\n\nThe sources support the core claim, though edge cases may vary.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Answers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly supported and balanced, but a moderately detailed answer usually scores higher. The ensemble favors answers that state the main point and then support it.\n\nVery short answers get a lower clarity score.\n\nKey points:\n- Very short answers get a lower clarity score.\n\n[S13] Very short answers get a lower clarity score.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "In conclusion I would like to say that Summary: After candidates are scored and ranked, a synthesis step merges the top few into a single answer. The judge keeps claims that have source support, preserves balanced framing, and explains conflicts between candidates. The result is one practical, unbiased answer instead of several partial ones.\n\nDetails: It merges the top candidates into one final answer.\n\nKey points:\n- It merges the top candidates into one final answer.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S18] It",
+  "text": "In conclusion I would like to say that Summary: After candidates are scored and ranked, a synthesis step merges the top few into a single answer. The judge keeps claims that have source support, preserves balanced framing, and explains conflicts between candidates. The result is one practical, unbiased answer instead of several partial ones.\n\nDetails: It merges the top candidates into one final answer.\n\nKey points:\n- It merges the top candidates into one final answer.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S18] It merges the to",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -594,7 +594,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "In conclusion I would like to say that The local TinyGPT generator runs fully offline with no API cost, but its small size means it produces concise, style-consistent answers rather than deep expertise. It works best as one candidate in the ensemble and as a privacy-preserving fallback. Larger remote models can add depth when available.\n\nThey are small, fast, and offline, but answer depth is limited.\n\nKey points:\n- They are small, fast, and offline, but answer depth is limited.\n\n[S31] They are small, fast, and offline, but answer depth is limited.\n\nThe evidence here is limited, so this should ",
+  "text": "In conclusion I would like to say that Tradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\nThe local TinyGPT generator runs fully offline with no API cost, but its small size means it produces concise, style-consistent answers rather than deep expertise. It works best as one candidate in the ensemble and as a privacy-preserving fallback. Larger remote models can add depth when available.\n\n[S31] They are small, fast, and offline, but answer depth is limited.\n\nKey points:\n- They are small, fast, and offline, but answer depth is limited.\n\nThe so",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -606,7 +606,7 @@
   "clarity_score": 0.72
  },
  {
-  "text": "Local knowledge grounding helps a chat assistant answer from a trusted, curated corpus. Files in knowledge_sources/ are chunked, tokenized, and retrieved per question using token overlap. Retrieved chunks are quoted to the model as sources, which improves factual support and lets answers cite [S#] markers.\n\nLocal files placed in knowledge_sources/ are chunked and retrieved per question.\n\nKey points:\n- Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\n[S2] Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Summary: Local knowledge grounding helps a chat assistant answer from a trusted, curated corpus. Files in knowledge_sources/ are chunked, tokenized, and retrieved per question using token overlap. Retrieved chunks are quoted to the model as sources, which improves factual support and lets answers cite [S#] markers.\n\nDetails: Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\nKey points:\n- Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S2] Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -630,7 +630,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "Privacy redaction scans prompts and answers for sensitive patterns such as emails, phone numbers, credit card numbers, and API keys. When a pattern matches, the text is replaced with a [REDACTED] marker before it is sent to remote APIs. This keeps private identifiers out of third-party request logs.\n\nSensitive patterns like emails and keys are redacted before API calls.\n\nKey points:\n- Sensitive patterns like emails and keys are redacted before API calls.\n\n[S4] Sensitive patterns like emails and keys are redacted before API calls.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "According to [S4], Sensitive patterns like emails and keys are redacted before API calls.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that sensitive patterns like emails and keys are redacted before ... Key points:\n- Sensitive patterns like emails and keys are redacted before API calls.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -642,7 +642,7 @@
   "clarity_score": 0.72
  },
  {
-  "text": "In conclusion I would like to say that According to [S26], Redaction happens before any API call, not after.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that redaction happens before any api call, not after.... Key points:\n- Redaction happens before any API call, not after.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S26], Redaction happens before any API call, not after.. Both interpretati",
+  "text": "In conclusion I would like to say that According to [S26], Redaction happens before any API call, not after.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that redaction happens before any api call, not after.... Key points:\n- Redaction happens before any API call, not after.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S26], Redaction happens before any API call, not after..",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -654,13 +654,13 @@
   "clarity_score": 0.45
  },
  {
-  "text": "Each bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages repeated phrases. Lower temperatures give more conservative, predictable answers while higher temperatures explore more. These settings are per-provider, so the ensemble can tune each bot independently.\n\nTemperature, top_p, top_k, and repetition penalty shape each answer.\n\nKey points:\n- Temperature, top_p, top_k, and repetition penalty shape each answer.\n\n[S36] Temperature, top_p, top_k, and repetition penalty shape each answer.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nEach bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages repeated phrases. Lower temperatures give more conservative, predictable answers while higher temperatures explore more. These settings are per-provider, so the ensemble can tune each bot independently.\n\n[S36] Temperature, top_p, top_k, and repetition penalty shape each answer.\n\nKey points:\n- Temperature, top_p, top_k, and repetition penalty shape each answer.\n\nBoth interpretations have merit, and the right choice depends on context.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "In conclusion I would like to say that When candidates disagree, the synthesis step compares their claims against source support. Conflicts are noted explicitly in the final answer, with the most well-supported perspective given priority. The judge also looks for common ground and presents balanced tradeoffs where models have different but valid viewpoints.\n\nThe synthesis step identifies and resolves conflicts between candidates.\n\nKey points:\n- The synthesis step identifies and resolves conflicts between candidates.\n\n[S22] The synthesis step identifies and resolves conflicts between candidates",
+  "text": "In conclusion I would like to say that According to [S22], The synthesis step identifies and resolves conflicts between candidates.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the synthesis step identifies and resolves conflicts between... Key points:\n- The synthesis step identifies and resolves conflicts between candidates.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S22], The synthesis step",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -684,7 +684,7 @@
   "clarity_score": 0.45
  },
  {
-  "text": "Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nEach provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with the remaining successful candidates, so a single provider outage does not block the final answer.\n\n[S8] Each bot call is retried, and failed bots are excluded from ranking.\n\nKey points:\n- Each bot call is retried, and failed bots are excluded from ranking.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nEach provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with the remaining successful candidates, so a single provider outage does not block the final answer.\n\n[S8] Each bot call is retried, and failed bots are excluded from ranking.\n\nKey points:\n- Each bot call is retried, and failed bots are excluded from ranking.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -696,7 +696,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "When a question arrives, the source index tokenizes it and scores every chunk with BM25, a ranking function that balances term frequency against how common each term is across the corpus. The highest-scoring chunks are returned as sources. Because BM25 uses token overlap, rephrasing a question changes which chunks match, so well-worded questions retrieve better evidence. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "When a question arrives, the source index tokenizes it and scores every chunk with BM25, a ranking function that balances term frequency against how common each term is across the corpus. The highest-scoring chunks are returned as sources. Because BM25 uses token overlap, rephrasing a question changes which chunks match, so well-worded questions retrieve better evidence. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -714,7 +714,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "In conclusion I would like to say that Privacy redaction scans prompts and answers for sensitive patterns such as emails, phone numbers, credit card numbers, and API keys. When a pattern matches, the text is replaced with a [REDACTED] marker before it is sent to remote APIs. This keeps private identifiers out of third-party request logs.\n\nSensitive patterns like emails and keys are redacted before API calls.\n\nKey points:\n- Sensitive patterns like emails and keys are redacted before API calls.\n\n[S4] Sensitive patterns like emails and keys are redacted before API calls.\n\nThe sources support the ",
+  "text": "In conclusion I would like to say that According to [S4], Sensitive patterns like emails and keys are redacted before API calls.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that sensitive patterns like emails and keys are redacted before ... Key points:\n- Sensitive patterns like emails and keys are redacted before API calls.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S4], Sensitive patterns like emai",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -726,13 +726,13 @@
   "clarity_score": 0.82
  },
  {
-  "text": "According to [S29], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Each candidate answer is evaluated on three dimensions: source support measures factual grounding, bias score measures balanced framing, and clarity score measures readability. These are combined into a total score for ranking. The final answer also receives these scores for transparen",
+  "text": "According to [S29], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Each candidate answer is evaluated on three dimensions: source support measures factual grounding, bias score measures balanced framing, and clarity score measures readability. These are combined into a total score for ranking. The final answer also receives these scores for t",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
  },
  {
-  "text": "According to [S16], The system redacts patterns like emails and keys.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that the system redacts patterns like emails and keys.... Key points:\n- The system redacts patterns like emails and keys.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "If a candidate answer contains sensitive patterns, the synthesis step redacts them before showing the final answer. Detection covers emails, phone numbers, credit card numbers, and API key formats. Redaction is best-effort, so users should still review answers for private data.\n\nThe system redacts patterns like emails and keys.\n\nKey points:\n- The system redacts patterns like emails and keys.\n\n[S16] The system redacts patterns like emails and keys.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -744,7 +744,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "Clarity is measured by length and structure. Answers that are too short lack detail, while answers over a few hundred words lose focus. Structured answers that use short paragraphs or bullet lists score higher. A good answer states the main point first and adds detail only where it helps.\n\nConcise, structured answers with examples are the clearest.\n\nKey points:\n- Concise, structured answers with examples are the clearest.\n\n[S11] Concise, structured answers with examples are the clearest.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Tradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\n\nClarity is measured by length and structure. Answers that are too short lack detail, while answers over a few hundred words lose focus. Structured answers that use short paragraphs or bullet lists score higher. A good answer states the main point first and adds detail only where it helps.\n\n[S11] Concise, structured answers with examples are the clearest.\n\nKey points:\n- Concise, structured answers with examples are the clearest.\n\nThe evidence here is limited, so this should be read as uncertain.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -804,13 +804,13 @@
   "clarity_score": 0.8
  },
  {
-  "text": "Running a small model locally avoids sending prompts to remote data centers, which can lower the estimated carbon footprint per query. The sustainability layer tracks this as one metric among several. Local models are smaller, so they trade some quality for lower cost and better privacy.\n\nLocal inference avoids remote data-center overhead.\n\nKey points:\n- Local inference avoids remote data-center overhead.\n\n[S21] Local inference avoids remote data-center overhead.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Running a small model locally avoids sending prompts to remote data centers, which can lower the estimated carbon footprint per query. The sustainability layer tracks this as one metric among several. Local models are smaller, so they trade some quality for lower cost and better privacy.\n\nLocal inference avoids remote data-center overhead.\n\nKey points:\n- Local inference avoids remote data-center overhead.\n\n[S21] Local inference avoids remote data-center overhead.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S23], Fact-based questions with local sources get the best results.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that fact-based questions with local sources get the best results... Key points:\n- Fact-based questions with local sources get the best results.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Summary: Questions that can be answered from the knowledge_sources/ directory produce the highest quality answers. The ensemble also handles open-ended questions well by presenting multiple perspectives. Complex multi-part questions may need to be broken down for optimal results.\n\nDetails: Fact-based questions with local sources get the best results.\n\nKey points:\n- Fact-based questions with local sources get the best results.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\n[S23] Fact-based questions with local sources get the best results.\n\nThis is supported by the available sources.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -852,7 +852,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "According to [S31], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. The local TinyGPT generator runs fully offline with no API cost, but its small size means it produces concise, style-consistent answers rather than deep expertise. It works best as one candidate in the ensemble and as a privacy-preserving fallback. Larger remote models can add depth wh",
+  "text": "According to [S31], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\nThe local TinyGPT generator runs fully offline with no API cost, but its small size means it produces concise, style-consistent answers rather than deep expertise. It works best as o",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -906,13 +906,13 @@
   "clarity_score": 0.82
  },
  {
-  "text": "Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nIf a provider has several keys configured, the ensemble uses them in round-robin order. This spreads usage across keys and reduces the chance of hitting a per-key rate limit. A single exhausted key does not stop the ensemble because the next key is tried automatically.\n\n[S32] Keys are rotated in round-robin order to spread rate limits.\n\nKey points:\n- Keys are rotated in round-robin order to spread rate limits.\n\nThis is supported by the available sources.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S32], Keys are rotated in round-robin order to spread rate limits.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that keys are rotated in round-robin order to spread rate limits.... Key points:\n- Keys are rotated in round-robin order to spread rate limits.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S33], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message.\n\nRecent messages are kept in context, ",
+  "text": "According to [S33], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message.\n\nDetails: Recent messages are",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -930,7 +930,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S20], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Source retrieval splits files into paragraphs of roughly 850 characters and scores them by token overlap with the question. Chunks that are self-contained and use consistent vocabulary are easier to match. Breaking long documents into focused sections improves retrieval accuracy.\n\nChun",
+  "text": "According to [S20], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S20], Chunks with clear, self-contained wording match best.. This is supported by the available sources. The practical upshot is that chunks with clear, self-contained wording match best.... Key points:\n- Chunks with clear, self-contained wording match best.\n\nTradeoff: ch",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -960,7 +960,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "In conclusion I would like to say that According to [S15], Different providers have different strengths and failure modes.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that different providers have different strengths and failure mod... Key points:\n- Different providers have different strengths and failure modes.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S15], Different provid",
+  "text": "In conclusion I would like to say that According to [S15], Different providers have different strengths and failure modes.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that different providers have different strengths and failure mod... Key points:\n- Different providers have different strengths and failure modes.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S15",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1014,13 +1014,13 @@
   "clarity_score": 0.45
  },
  {
-  "text": "In conclusion I would like to say that Yes. You can drop supported files, like .txt, .md, or .csv, into the knowledge_sources folder and run /reload. The system chunks each file and indexes the tokens so future questions can retrieve the most relevant passages and cite them as [S1], [S2], and so on.\n\nDrop supported text files into the knowledge_sources folder.\n\nKey points:\n- Drop supported text files into the knowledge_sources folder.\n\n[S6] Drop supported text files into the knowledge_sources folder.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: cheape",
+  "text": "In conclusion I would like to say that Summary: Yes. You can drop supported files, like .txt, .md, or .csv, into the knowledge_sources folder and run /reload. The system chunks each file and indexes the tokens so future questions can retrieve the most relevant passages and cite them as [S1], [S2], and so on.\n\nDetails: Drop supported text files into the knowledge_sources folder.\n\nKey points:\n- Drop supported text files into the knowledge_sources folder.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\n[S6] Drop supported text files i",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "According to [S39], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state the main po",
+  "text": "According to [S39], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state th",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1038,7 +1038,7 @@
   "clarity_score": 0.72
  },
  {
-  "text": "Source retrieval splits files into paragraphs of roughly 850 characters and scores them by token overlap with the question. Chunks that are self-contained and use consistent vocabulary are easier to match. Breaking long documents into focused sections improves retrieval accuracy.\n\nChunks with clear, self-contained wording match best.\n\nKey points:\n- Chunks with clear, self-contained wording match best.\n\n[S20] Chunks with clear, self-contained wording match best.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S20], Chunks with clear, self-contained wording match best.. This is supported by the available sources. The practical upshot is that chunks with clear, self-contained wording match best.... Key points:\n- Chunks with clear, self-contained wording match best.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -1050,19 +1050,19 @@
   "clarity_score": 0.74
  },
  {
-  "text": "Summary: The knowledge base indexes text-based files: plain text, Markdown, and CSV are read directly and split into chunks. Binary formats like PDFs or images are not parsed. Keeping sources in simple text formats makes retrieval fast and predictable, at the cost of not supporting rich document types.\n\nDetails: Text-based formats like .txt, .md, and .csv are indexed.\n\nKey points:\n- Text-based formats like .txt, .md, and .csv are indexed.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\n\n[S38] Text-based formats like .txt, .md, and .csv are indexed.\n\nBoth interpretations have merit, and the right choice depends on context.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S38], Text-based formats like .txt, .md, and .csv are indexed.. The sources support the core claim, though edge cases may vary. The practical upshot is that text-based formats like .txt, .md, and .csv are indexed.... Key points:\n- Text-based formats like .txt, .md, and .csv are indexed.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "In conclusion I would like to say that Summary: The knowledge base indexes text-based files: plain text, Markdown, and CSV are read directly and split into chunks. Binary formats like PDFs or images are not parsed. Keeping sources in simple text formats makes retrieval fast and predictable, at the cost of not supporting rich document types.\n\nDetails: Text-based formats like .txt, .md, and .csv are indexed.\n\nKey points:\n- Text-based formats like .txt, .md, and .csv are indexed.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\n\n[S38] Text-",
+  "text": "In conclusion I would like to say that According to [S38], Text-based formats like .txt, .md, and .csv are indexed.. The sources support the core claim, though edge cases may vary. The practical upshot is that text-based formats like .txt, .md, and .csv are indexed.... Key points:\n- Text-based formats like .txt, .md, and .csv are indexed.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S38], Text-based formats like .txt, .md, and .csv are indexed.. The",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "According to [S15], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S15], Different providers have different strengths and failure modes.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that different providers have different strengths and failure mod... Key points:\n- Different providers have di",
+  "text": "According to [S15], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S15], Different providers have different strengths and failure modes.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that different providers have different strengths and failure mod... Key points:\n- Different providers ",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1080,7 +1080,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S1], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: A multi-LLM ensemble sends one prompt to several independent models in parallel. Each candidate is scored for source support, bias, and clarity, and the best parts are merged into a single answer. This reduces model-specific blind spots because a weak claim from one model is li",
+  "text": "According to [S1], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. A multi-LLM ensemble sends one prompt to several independent models in parallel. Each candidate is scored for source support, bias, and clarity, and the best parts are merged into a single answer. This reduces model-specific blind spots because a weak claim from one model is likely to b",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1092,7 +1092,7 @@
   "clarity_score": 0.7
  },
  {
-  "text": "In conclusion I would like to say that Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nAPI keys generated by the platform are stored as hashes and never as plain text. The dashboard shows the full key once at creation time, then only a masked prefix afterward. If a key is compromised, it can be revoked from the API keys page and a new one issued.\n\n[S14] Keys are hashed, never stored in plain text.\n\nKey points:\n- Keys are hashed, never stored in plain text.\n\nThe evidence here is limited, so this should be read as uncertain.\nC",
+  "text": "In conclusion I would like to say that According to [S14], Keys are hashed, never stored in plain text.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that keys are hashed, never stored in plain text.... Key points:\n- Keys are hashed, never stored in plain text.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S14], Keys are hashed, never stored in plain text.. The evidence here is",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1104,7 +1104,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "According to [S25], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. The synthesis step evaluates each candidate's contributions independently. It keeps claims that have strong source support, preserves balanced framing, and explains where candidates disagreed. The final answer is a coherent whole rather than a patchwork, with citations maintained for t",
+  "text": "According to [S25], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: The synthesis step evaluates each candidate's contributions independently. It keeps claims that have strong source support, preserves balanced framing, and explains where candidates disagreed. The final answer is a coherent whole rather than a patchwork, with citations maintai",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1116,13 +1116,13 @@
   "clarity_score": 0.45
  },
  {
-  "text": "Summary: Each provider call is retried with backoff, and failed bots are excluded from ranking. If every configured provider is unavailable, the ensemble falls back to the local model when enabled, otherwise it returns a clear error. This total-failure case is rare because multiple providers and keys are tried first.\n\nDetails: The query returns an error unless a local fallback exists.\n\nKey points:\n- The query returns an error unless a local fallback exists.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S37] The query returns an error unless a local fallback exists.\n\nThe evidence here is limited, so this should be read as uncertain.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S37], The query returns an error unless a local fallback exists.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the query returns an error unless a local fallback exists.... Key points:\n- The query returns an error unless a local fallback exists.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "When no local sources match a question, the ensemble still answers using the providers' knowledge, but the source support score is capped lower. The system flags which parts are uncertain and encourages answers to present tradeoffs. Adding relevant files to knowledge_sources/ improves grounding over time. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "When no local sources match a question, the ensemble still answers using the providers' knowledge, but the source support score is capped lower. The system flags which parts are uncertain and encourages answers to present tradeoffs. Adding relevant files to knowledge_sources/ improves grounding over time. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -1164,19 +1164,19 @@
   "clarity_score": 0.74
  },
  {
-  "text": "In conclusion I would like to say that Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a bounded candidate count.\n\nRound-robin keys and retries keep costs stable per query.\n\nKey points:\n- Round-robin keys and retries keep costs stable per query.\n\n[S12] Round-robin keys and retries keep costs stable per query.\n\nThe evidence here is limited, so this should be read as uncer",
+  "text": "In conclusion I would like to say that Summary: Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a bounded candidate count.\n\nDetails: Round-robin keys and retries keep costs stable per query.\n\nKey points:\n- Round-robin keys and retries keep costs stable per query.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not c",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "Candidate answers are ranked by a weighted total score. Source support measures how much of an answer can be backed by retrieved local sources, the bias score penalizes absolute wording, and the clarity score rewards concise structured answers. The top candidates are then merged by a final synthesis step. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Candidate answers are ranked by a weighted total score. Source support measures how much of an answer can be backed by retrieved local sources, the bias score penalizes absolute wording, and the clarity score rewards concise structured answers. The top candidates are then merged by a final synthesis step. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
  },
  {
-  "text": "In conclusion I would like to say that Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nCustom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare retraining can leave the model stale. A sensible cadence is to retrain after major data updates and validate on a held-out set.\n\n[S19] Retrain when your data or your answer style changes.\n\nKey points:\n- Retrain when your data or your answer style changes.\n\nThis is supported",
+  "text": "In conclusion I would like to say that Summary: Custom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare retraining can leave the model stale. A sensible cadence is to retrain after major data updates and validate on a held-out set.\n\nDetails: Retrain when your data or your answer style changes.\n\nKey points:\n- Retrain when your data or your answer style changes.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S19]",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1188,7 +1188,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "According to [S4], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Privacy redaction scans prompts and answers for sensitive patterns such as emails, phone numbers, credit card numbers, and API keys. When a pattern matches, the text is replaced with a [REDACTED] marker before it is sent to remote APIs. This keeps private identifiers out of third-party ",
+  "text": "According to [S4], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S4], Sensitive patterns like emails and keys are redacted before API calls.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that sensitive patterns like emails and keys are redacted before ... Key points:\n- Sensitive patterns lik",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1206,7 +1206,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "According to [S6], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Yes. You can drop supported files, like .txt, .md, or .csv, into the knowledge_sources folder and run /reload. The system chunks each file and indexes the tokens so future questions can retrieve the most relevant passages and cite them as [S1], [S2], and so on.\n\nDrop supported text file",
+  "text": "According to [S6], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Yes. You can drop supported files, like .txt, .md, or .csv, into the knowledge_sources folder and run /reload. The system chunks each file and indexes the tokens so future questions can retrieve the most relevant passages and cite them as [S1], [S2], and so on.\n\nDetails: Drop s",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1218,7 +1218,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "The knowledge base indexes text-based files: plain text, Markdown, and CSV are read directly and split into chunks. Binary formats like PDFs or images are not parsed. Keeping sources in simple text formats makes retrieval fast and predictable, at the cost of not supporting rich document types. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "The knowledge base indexes text-based files: plain text, Markdown, and CSV are read directly and split into chunks. Binary formats like PDFs or images are not parsed. Keeping sources in simple text formats makes retrieval fast and predictable, at the cost of not supporting rich document types. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -1236,7 +1236,7 @@
   "clarity_score": 0.72
  },
  {
-  "text": "Each provider call is retried with backoff, and failed bots are excluded from ranking. If every configured provider is unavailable, the ensemble falls back to the local model when enabled, otherwise it returns a clear error. This total-failure case is rare because multiple providers and keys are tried first. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Each provider call is retried with backoff, and failed bots are excluded from ranking. If every configured provider is unavailable, the ensemble falls back to the local model when enabled, otherwise it returns a clear error. This total-failure case is rare because multiple providers and keys are tried first. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -1248,13 +1248,13 @@
   "clarity_score": 0.45
  },
  {
-  "text": "In conclusion I would like to say that The platform tracks an estimated carbon footprint for each query as a sustainability metric. It is one input among several; answer quality, latency, and cost are the primary selection criteria. The carbon estimate should be treated as approximate rather than an audited measurement.\n\nThe sustainability layer tracks estimated carbon usage of each query.\n\nKey points:\n- The sustainability layer tracks estimated carbon usage of each query.\n\n[S7] The sustainability layer tracks estimated carbon usage of each query.\n\nThe evidence here is limited, so this should ",
+  "text": "In conclusion I would like to say that According to [S7], The sustainability layer tracks estimated carbon usage of each query.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the sustainability layer tracks estimated carbon usage of ea... Key points:\n- The sustainability layer tracks estimated carbon usage of each query.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S7], The sust",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "According to [S3], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S3], Answers that present both sides of a tradeoff are less misleading.. The sources support the core claim, though edge cases may vary. The practical upshot is that answers that present both sides of a tradeoff are less misle... Key points:\n- Answers that present both sid",
+  "text": "According to [S3], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S3], Answers that present both sides of a tradeoff are less misleading.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that answers that present both sides of a tradeoff are less misle... Key points:\n- Answers that presen",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1284,7 +1284,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "According to [S30], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended.\n\nAmbiguous prompts ",
+  "text": "According to [S30], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended.\n\nDetails: ",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1314,13 +1314,13 @@
   "clarity_score": 0.82
  },
  {
-  "text": "Answers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly supported and balanced, but a moderately detailed answer usually scores higher. The ensemble favors answers that state the main point and then support it. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Answers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly supported and balanced, but a moderately detailed answer usually scores higher. The ensemble favors answers that state the main point and then support it. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
  },
  {
-  "text": "According to [S13], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nAnswers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly suppor",
+  "text": "According to [S13], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Answers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly supported and balanced, but a moderately detailed answer usually scores higher. The ensemble favors answers that state the m",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1338,7 +1338,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "In conclusion I would like to say that When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended.\n\nAmbiguous prompts are flagged and answered with explicit assumptions.\n\nKey points:\n- Ambiguous prompts are flagged and answered with explicit assumptions.\n\n[S30] Ambiguous prompts are flagged and answered with explicit assumptions.\n\nThis is supported by the available sources.\n\nTradeoff: riche",
+  "text": "In conclusion I would like to say that Summary: When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended.\n\nDetails: Ambiguous prompts are flagged and answered with explicit assumptions.\n\nKey points:\n- Ambiguous prompts are flagged and answered with explicit assumptions.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S30] Ambiguous",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1350,7 +1350,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S27], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synthesis.\n\nP",
+  "text": "According to [S27], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synt",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1392,7 +1392,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S5], Candidates are ranked by source support, bias score, and clarity score.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that candidates are ranked by source support, bias score, and cla... Key points:\n- Candidates are ranked by source support, bias score, and clarity score.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Tradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\nCandidate answers are ranked by a weighted total score. Source support measures how much of an answer can be backed by retrieved local sources, the bias score penalizes absolute wording, and the clarity score rewards concise structured answers. The top candidates are then merged by a final synthesis step.\n\n[S5] Candidates are ranked by source support, bias score, and clarity score.\n\nKey points:\n- Candidates are ranked by source support, bias score, and clarity score.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -1404,13 +1404,13 @@
   "clarity_score": 0.45
  },
  {
-  "text": "The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
  },
  {
-  "text": "In conclusion I would like to say that Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nEach provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with the remaining successful candidates, so a single provider outage does not block the final answer.\n\n[S8] Each bot call is retried, and failed bots are excluded from ranking.\n\nKey points:\n- Each bot call is retried, and failed bots are excluded from ranking.\n\nSome of this depends on th",
+  "text": "In conclusion I would like to say that Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nEach provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with the remaining successful candidates, so a single provider outage does not block the final answer.\n\n[S8] Each bot call is retried, and failed bots are excluded from ranking.\n\nKey points:\n- Each bot call is retried, and failed bots are excluded from ranking.\n\nSome of this depen",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1422,7 +1422,7 @@
   "clarity_score": 0.7
  },
  {
-  "text": "According to [S5], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S5], Candidates are ranked by source support, bias score, and clarity score.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that candidates are ranked by source support, bias score, and cla... Key points:\n- Candidates are",
+  "text": "According to [S5], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\nCandidate answers are ranked by a weighted total score. Source support measures how much of an answer can be backed by retrieved local sources, the bias score penalizes absolute wordi",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1434,13 +1434,13 @@
   "clarity_score": 0.82
  },
  {
-  "text": "In conclusion I would like to say that Running a small model locally avoids sending prompts to remote data centers, which can lower the estimated carbon footprint per query. The sustainability layer tracks this as one metric among several. Local models are smaller, so they trade some quality for lower cost and better privacy.\n\nLocal inference avoids remote data-center overhead.\n\nKey points:\n- Local inference avoids remote data-center overhead.\n\n[S21] Local inference avoids remote data-center overhead.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: richer context",
+  "text": "In conclusion I would like to say that Running a small model locally avoids sending prompts to remote data centers, which can lower the estimated carbon footprint per query. The sustainability layer tracks this as one metric among several. Local models are smaller, so they trade some quality for lower cost and better privacy.\n\nLocal inference avoids remote data-center overhead.\n\nKey points:\n- Local inference avoids remote data-center overhead.\n\n[S21] Local inference avoids remote data-center overhead.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: broad answers ",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "In conclusion I would like to say that Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nLong documents are automatically split into paragraphs of roughly 850 characters each. Each chunk is indexed separately and can be retrieved independently. This allows the system to find relevant passages from long documents without being overwhelmed by irrelevant content.\n\n[S28] They are split into chunks for retrieval.\n\nKey points:\n- They are split into chunks for retrieval.\n\nSome of this depends on the exact dataset used, so treat it as approxi",
+  "text": "In conclusion I would like to say that According to [S28], They are split into chunks for retrieval.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that they are split into chunks for retrieval.... Key points:\n- They are split into chunks for retrieval.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S28], They are split into chunks for retrieval.. Some of this depends on the e",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1458,13 +1458,13 @@
   "clarity_score": 0.72
  },
  {
-  "text": "Each provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with the remaining successful candidates, so a single provider outage does not block the final answer. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Each provider call is retried with exponential backoff. If a bot still fails, its candidate is marked as failed and excluded from ranking. The ensemble continues with the remaining successful candidates, so a single provider outage does not block the final answer. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
  },
  {
-  "text": "The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message.\n\nRecent messages are kept in context, older ones are summarized.\n\nKey points:\n- Recent messages are kept in context, older ones are summarized.\n\n[S33] Recent messages are kept in context, older ones are summarized.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Summary: The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message.\n\nDetails: Recent messages are kept in context, older ones are summarized.\n\nKey points:\n- Recent messages are kept in context, older ones are summarized.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S33] Recent messages are kept in context, older ones are summarized.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -1554,7 +1554,7 @@
   "clarity_score": 0.45
  },
  {
-  "text": "According to [S10], Training starts from scratch; fine-tuning starts from a pretrained checkpoint.. The sources support the core claim, though edge cases may vary. The practical upshot is that training starts from scratch; fine-tuning starts from a pret... Key points:\n- Training starts from scratch; fine-tuning starts from a pretrained checkpoint.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Training a model from scratch initializes random weights and learns everything from the corpus. Fine-tuning starts from an already pretrained checkpoint and only adapts it to a narrower task. From-scratch training needs more data and compute, but fine-tuning risks inheriting the base model's biases.\n\nTraining starts from scratch; fine-tuning starts from a pretrained checkpoint.\n\nKey points:\n- Training starts from scratch; fine-tuning starts from a pretrained checkpoint.\n\n[S10] Training starts from scratch; fine-tuning starts from a pretrained checkpoint.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -1566,13 +1566,13 @@
   "clarity_score": 0.8
  },
  {
-  "text": "In conclusion I would like to say that Each bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages repeated phrases. Lower temperatures give more conservative, predictable answers while higher temperatures explore more. These settings are per-provider, so the ensemble can tune each bot independently.\n\nTemperature, top_p, top_k, and repetition penalty shape each answer.\n\nKey points:\n- Temperature, top_p, top_k, and repetition penalty shape each answer.\n\n[S36] Temperature, top_p, top_",
+  "text": "In conclusion I would like to say that Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nEach bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages repeated phrases. Lower temperatures give more conservative, predictable answers while higher temperatures explore more. These settings are per-provider, so the ensemble can tune each bot independently.\n\n[S36] Temperature, top_p, top_k, and repetition penalty shape each answer.",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "In conclusion I would like to say that Summary: The default weights are 50% source support, 25% bias score, and 25% clarity score. These can be modified in the build_ensemble_answer function to prioritize different aspects. For example, increasing source support weight makes answers more conservative and fact-based.\n\nDetails: Yes, the scoring formula can be adjusted in the code.\n\nKey points:\n- Yes, the scoring formula can be adjusted in the code.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S24] Yes, the scoring formula can be adjust",
+  "text": "In conclusion I would like to say that According to [S24], Yes, the scoring formula can be adjusted in the code.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that yes, the scoring formula can be adjusted in the code.... Key points:\n- Yes, the scoring formula can be adjusted in the code.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S24], Yes, the scoring formula can be ad",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1584,7 +1584,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "Summary: A multi-LLM ensemble sends one prompt to several independent models in parallel. Each candidate is scored for source support, bias, and clarity, and the best parts are merged into a single answer. This reduces model-specific blind spots because a weak claim from one model is likely to be contradicted by another.\n\nDetails: An ensemble queries several independent models in parallel and merges the best parts.\n\nKey points:\n- An ensemble queries several independent models in parallel and merges the best parts.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S1] An ensemble queries several independent models in parallel and merges the best parts.\n\nThe sources support the core claim, though edge cases may vary.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "A multi-LLM ensemble sends one prompt to several independent models in parallel. Each candidate is scored for source support, bias, and clarity, and the best parts are merged into a single answer. This reduces model-specific blind spots because a weak claim from one model is likely to be contradicted by another.\n\nAn ensemble queries several independent models in parallel and merges the best parts.\n\nKey points:\n- An ensemble queries several independent models in parallel and merges the best parts.\n\n[S1] An ensemble queries several independent models in parallel and merges the best parts.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -1596,7 +1596,7 @@
   "clarity_score": 0.55
  },
  {
-  "text": "According to [S32], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nIf a provider has several keys configured, the ensemble uses them in round-robin order. This spreads usage across keys and reduces the chance of hitting a per-key rate ",
+  "text": "According to [S32], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S32], Keys are rotated in round-robin order to spread rate limits.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that keys are rotated in round-robin order to spread rate limits.... Key points:\n- Keys are rotated in r",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1620,7 +1620,7 @@
   "clarity_score": 0.55
  },
  {
-  "text": "In conclusion I would like to say that The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message.\n\nRecent messages are kept in context, older ones are summarized.\n\nKey points:\n- Recent messages are kept in context, older ones are summarized.\n\n[S33] Recent messages are kept in context, older ones are summarized.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: cheaper models add lat",
+  "text": "In conclusion I would like to say that Summary: The ensemble keeps recent turns in the active context and summarizes older ones to control token usage. Long histories are trimmed so the prompt stays within provider limits. Redaction runs on the full message history, not just the latest message.\n\nDetails: Recent messages are kept in context, older ones are summarized.\n\nKey points:\n- Recent messages are kept in context, older ones are summarized.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S33] Recent messages are kept in context, old",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1692,31 +1692,31 @@
   "clarity_score": 0.45
  },
  {
-  "text": "When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended.\n\nAmbiguous prompts are flagged and answered with explicit assumptions.\n\nKey points:\n- Ambiguous prompts are flagged and answered with explicit assumptions.\n\n[S30] Ambiguous prompts are flagged and answered with explicit assumptions.\n\nThis is supported by the available sources.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Summary: When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended.\n\nDetails: Ambiguous prompts are flagged and answered with explicit assumptions.\n\nKey points:\n- Ambiguous prompts are flagged and answered with explicit assumptions.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S30] Ambiguous prompts are flagged and answered with explicit assumptions.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S14], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nAPI keys generated by the platform are stored as hashes and never as plain text. The dashboard shows the full key once at creation time, then only a masked prefix after",
+  "text": "According to [S14], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S14], Keys are hashed, never stored in plain text.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that keys are hashed, never stored in plain text.... Key points:\n- Keys are hashed, never stored in plain text.\n\nTradeoff: a quic",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
  },
  {
-  "text": "In conclusion I would like to say that According to [S35], Chunks are scored by BM25 against the question tokens.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that chunks are scored by bm25 against the question tokens.... Key points:\n- Chunks are scored by BM25 against the question tokens.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S35], Chunks are scored by BM25 against the question toke",
+  "text": "In conclusion I would like to say that According to [S35], Chunks are scored by BM25 against the question tokens.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that chunks are scored by bm25 against the question tokens.... Key points:\n- Chunks are scored by BM25 against the question tokens.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind. According to [S35], Chunks are scored by BM25 against the qu",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nCustom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare retraining can leave the model stale. A sensible cadence is to retrain after major data updates and validate on a held-out set.\n\n[S19] Retrain when your data or your answer style changes.\n\nKey points:\n- Retrain when your data or your answer style changes.\n\nThis is supported by the available sources.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Summary: Custom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare retraining can leave the model stale. A sensible cadence is to retrain after major data updates and validate on a held-out set.\n\nDetails: Retrain when your data or your answer style changes.\n\nKey points:\n- Retrain when your data or your answer style changes.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S19] Retrain when your data or your answer style changes.\n\nThe evidence here is limited, so this should be read as uncertain.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S35], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S35], Chunks are scored by BM25 against the question tokens.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that chunks are scored by bm25 against the question tokens.... Key points:\n- Chunks are scored by BM25 against",
+  "text": "According to [S35], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S35], Chunks are scored by BM25 against the question tokens.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that chunks are scored by bm25 against the question tokens.... Key points:\n- Chunks are scored by BM25 against the ques",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1740,7 +1740,7 @@
   "clarity_score": 0.7
  },
  {
-  "text": "In conclusion I would like to say that Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nIf a provider has several keys configured, the ensemble uses them in round-robin order. This spreads usage across keys and reduces the chance of hitting a per-key rate limit. A single exhausted key does not stop the ensemble because the next key is tried automatically.\n\n[S32] Keys are rotated in round-robin order to spread rate limits.\n\nKey points:\n- Keys are rotated in round-robin order to spread rate limits.\n\nThis is supported by the ava",
+  "text": "In conclusion I would like to say that According to [S32], Keys are rotated in round-robin order to spread rate limits.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that keys are rotated in round-robin order to spread rate limits.... Key points:\n- Keys are rotated in round-robin order to spread rate limits.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S32], Keys are rotated in round-robin o",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1800,7 +1800,7 @@
   "clarity_score": 0.7
  },
  {
-  "text": "According to [S16], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S16], The system redacts patterns like emails and keys.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that the system redacts patterns like emails and keys.... Key points:\n- The system redacts patterns like emails and k",
+  "text": "According to [S16], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. If a candidate answer contains sensitive patterns, the synthesis step redacts them before showing the final answer. Detection covers emails, phone numbers, credit card numbers, and API key formats. Redaction is best-effort, so users should still review answers for private data.\n\nThe sy",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1812,19 +1812,19 @@
   "clarity_score": 0.45
  },
  {
-  "text": "The synthesis step evaluates each candidate's contributions independently. It keeps claims that have strong source support, preserves balanced framing, and explains where candidates disagreed. The final answer is a coherent whole rather than a patchwork, with citations maintained for traceability.\n\nThe judge extracts and combines the best parts from each candidate.\n\nKey points:\n- The judge extracts and combines the best parts from each candidate.\n\n[S25] The judge extracts and combines the best parts from each candidate.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Summary: The synthesis step evaluates each candidate's contributions independently. It keeps claims that have strong source support, preserves balanced framing, and explains where candidates disagreed. The final answer is a coherent whole rather than a patchwork, with citations maintained for traceability.\n\nDetails: The judge extracts and combines the best parts from each candidate.\n\nKey points:\n- The judge extracts and combines the best parts from each candidate.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S25] The judge extracts and combines the best parts from each candidate.\n\nThe sources support the core claim, though edge cases may vary.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "In conclusion I would like to say that Summary: Each provider call is retried with backoff, and failed bots are excluded from ranking. If every configured provider is unavailable, the ensemble falls back to the local model when enabled, otherwise it returns a clear error. This total-failure case is rare because multiple providers and keys are tried first.\n\nDetails: The query returns an error unless a local fallback exists.\n\nKey points:\n- The query returns an error unless a local fallback exists.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privac",
+  "text": "In conclusion I would like to say that According to [S37], The query returns an error unless a local fallback exists.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the query returns an error unless a local fallback exists.... Key points:\n- The query returns an error unless a local fallback exists.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S37], The query returns an error unless a loca",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "According to [S26], Redaction happens before any API call, not after.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that redaction happens before any api call, not after.... Key points:\n- Redaction happens before any API call, not after.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S26], Redaction happens before any API call, not after.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that redaction happens before any api call, not after.... Key points:\n- Redaction happens before any API call, not after.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -1860,19 +1860,19 @@
   "clarity_score": 0.74
  },
  {
-  "text": "Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synthesis.\n\nPersonas encourage diverse perspectives in candidate answers.\n\nKey points:\n- Personas encourage diverse perspectives in candidate answers.\n\n[S27] Personas encourage diverse perspectives in candidate answers.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Summary: Each bot adopts a specific persona like Factual Analyst, Skeptical Reviewer, or Neutral Teacher. This encourages the ensemble to generate answers from different angles. The persona instructions guide the model to focus on particular aspects, which are then balanced during synthesis.\n\nDetails: Personas encourage diverse perspectives in candidate answers.\n\nKey points:\n- Personas encourage diverse perspectives in candidate answers.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S27] Personas encourage diverse perspectives in candidate answers.\n\nThe sources support the core claim, though edge cases may vary.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S36], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Each bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages repeated phrases. Lower temperatures give more conservative, predictable answers while higher temperatures explor",
+  "text": "According to [S36], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nEach bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages rep",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
  },
  {
-  "text": "In conclusion I would like to say that According to [S5], Candidates are ranked by source support, bias score, and clarity score.. Both interpretations have merit, and the right choice depends on context. The practical upshot is that candidates are ranked by source support, bias score, and cla... Key points:\n- Candidates are ranked by source support, bias score, and clarity score.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S5], Candidates are ",
+  "text": "In conclusion I would like to say that Tradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\nCandidate answers are ranked by a weighted total score. Source support measures how much of an answer can be backed by retrieved local sources, the bias score penalizes absolute wording, and the clarity score rewards concise structured answers. The top candidates are then merged by a final synthesis step.\n\n[S5] Candidates are ranked by source support, bias score, and clarity score.\n\nKey points:\n- Candidates are ranked by source support, bias score, and ",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1884,13 +1884,13 @@
   "clarity_score": 0.55
  },
  {
-  "text": "Each candidate answer is evaluated on three dimensions: source support measures factual grounding, bias score measures balanced framing, and clarity score measures readability. These are combined into a total score for ranking. The final answer also receives these scores for transparency.\n\nSource support, bias score, clarity score, and total score.\n\nKey points:\n- Source support, bias score, clarity score, and total score.\n\n[S29] Source support, bias score, clarity score, and total score.\n\nThis is supported by the available sources.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "Summary: Each candidate answer is evaluated on three dimensions: source support measures factual grounding, bias score measures balanced framing, and clarity score measures readability. These are combined into a total score for ranking. The final answer also receives these scores for transparency.\n\nDetails: Source support, bias score, clarity score, and total score.\n\nKey points:\n- Source support, bias score, clarity score, and total score.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S29] Source support, bias score, clarity score, and total score.\n\nBoth interpretations have merit, and the right choice depends on context.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "According to [S19], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nCustom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare",
+  "text": "According to [S19], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Custom models should be retrained when the underlying corpus changes meaningfully or when the desired answer style shifts. Frequent retraining costs compute, while rare retraining can leave the model stale. A sensible cadence is to retrain after major data updates and validate",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1914,7 +1914,7 @@
   "clarity_score": 0.7
  },
  {
-  "text": "In conclusion I would like to say that Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nAnswers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly supported and balanced, but a moderately detailed answer usually scores higher. The ensemble favors answers that state the main point and then support it.\n\n[S13] Very short answers get a lower clarity score.\n\nKey points:\n- Very short answers get a lower clarity score.\n\nThe sources",
+  "text": "In conclusion I would like to say that Answers shorter than a few sentences often lack detail, so the clarity score gives them partial credit. A focused one-line answer can still win if it is strongly supported and balanced, but a moderately detailed answer usually scores higher. The ensemble favors answers that state the main point and then support it.\n\nVery short answers get a lower clarity score.\n\nKey points:\n- Very short answers get a lower clarity score.\n\n[S13] Very short answers get a lower clarity score.\n\nThe sources support the core claim, though edge cases may vary.\n\nTradeoff: richer ",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -1926,7 +1926,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S2], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Local knowledge grounding helps a chat assistant answer from a trusted, curated corpus. Files in knowledge_sources/ are chunked, tokenized, and retrieved per question using token overlap. Retrieved chunks are quoted to the model as sources, which improves factual support and lets answer",
+  "text": "According to [S2], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Local knowledge grounding helps a chat assistant answer from a trusted, curated corpus. Files in knowledge_sources/ are chunked, tokenized, and retrieved per question using token overlap. Retrieved chunks are quoted to the model as sources, which improves factual support and le",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1956,7 +1956,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "The local TinyGPT generator runs fully offline with no API cost, but its small size means it produces concise, style-consistent answers rather than deep expertise. It works best as one candidate in the ensemble and as a privacy-preserving fallback. Larger remote models can add depth when available.\n\nThey are small, fast, and offline, but answer depth is limited.\n\nKey points:\n- They are small, fast, and offline, but answer depth is limited.\n\n[S31] They are small, fast, and offline, but answer depth is limited.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Tradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\nThe local TinyGPT generator runs fully offline with no API cost, but its small size means it produces concise, style-consistent answers rather than deep expertise. It works best as one candidate in the ensemble and as a privacy-preserving fallback. Larger remote models can add depth when available.\n\n[S31] They are small, fast, and offline, but answer depth is limited.\n\nKey points:\n- They are small, fast, and offline, but answer depth is limited.\n\nThe sources support the core claim, though edge cases may vary.\nConclusion: on balance, the sources support the practical answer above.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -1974,7 +1974,7 @@
   "clarity_score": 0.74
  },
  {
-  "text": "According to [S10], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S10], Training starts from scratch; fine-tuning starts from a pretrained checkpoint.. The sources support the core claim, though edge cases may vary. The practical upshot is that training starts from scratch; fine-tuning starts from a pret... Key points:\n- Training starts",
+  "text": "According to [S10], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Training a model from scratch initializes random weights and learns everything from the corpus. Fine-tuning starts from an already pretrained checkpoint and only adapts it to a narrower task. From-scratch training needs more data and compute, but fine-tuning risks inheriting the base m",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -1998,19 +1998,19 @@
   "clarity_score": 0.7
  },
  {
-  "text": "Summary: After candidates are scored and ranked, a synthesis step merges the top few into a single answer. The judge keeps claims that have source support, preserves balanced framing, and explains conflicts between candidates. The result is one practical, unbiased answer instead of several partial ones.\n\nDetails: It merges the top candidates into one final answer.\n\nKey points:\n- It merges the top candidates into one final answer.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S18] It merges the top candidates into one final answer.\n\nThis is supported by the available sources.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Summary: After candidates are scored and ranked, a synthesis step merges the top few into a single answer. The judge keeps claims that have source support, preserves balanced framing, and explains conflicts between candidates. The result is one practical, unbiased answer instead of several partial ones.\n\nDetails: It merges the top candidates into one final answer.\n\nKey points:\n- It merges the top candidates into one final answer.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S18] It merges the top candidates into one final answer.\n\nThe evidence here is limited, so this should be read as uncertain.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "The platform tracks an estimated carbon footprint for each query as a sustainability metric. It is one input among several; answer quality, latency, and cost are the primary selection criteria. The carbon estimate should be treated as approximate rather than an audited measurement. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "The platform tracks an estimated carbon footprint for each query as a sustainability metric. It is one input among several; answer quality, latency, and cost are the primary selection criteria. The carbon estimate should be treated as approximate rather than an audited measurement. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
  },
  {
-  "text": "If a candidate answer contains sensitive patterns, the synthesis step redacts them before showing the final answer. Detection covers emails, phone numbers, credit card numbers, and API key formats. Redaction is best-effort, so users should still review answers for private data. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "If a candidate answer contains sensitive patterns, the synthesis step redacts them before showing the final answer. Detection covers emails, phone numbers, credit card numbers, and API key formats. Redaction is best-effort, so users should still review answers for private data. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -2040,7 +2040,7 @@
   "clarity_score": 0.8
  },
  {
-  "text": "In conclusion I would like to say that Each candidate answer is evaluated on three dimensions: source support measures factual grounding, bias score measures balanced framing, and clarity score measures readability. These are combined into a total score for ranking. The final answer also receives these scores for transparency.\n\nSource support, bias score, clarity score, and total score.\n\nKey points:\n- Source support, bias score, clarity score, and total score.\n\n[S29] Source support, bias score, clarity score, and total score.\n\nThis is supported by the available sources.\n\nTradeoff: a quick answ",
+  "text": "In conclusion I would like to say that Summary: Each candidate answer is evaluated on three dimensions: source support measures factual grounding, bias score measures balanced framing, and clarity score measures readability. These are combined into a total score for ranking. The final answer also receives these scores for transparency.\n\nDetails: Source support, bias score, clarity score, and total score.\n\nKey points:\n- Source support, bias score, clarity score, and total score.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S29] Source",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -2100,13 +2100,13 @@
   "clarity_score": 0.72
  },
  {
-  "text": "In conclusion I would like to say that The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state the main point first and keep supporting detail tight.\n\nA clarity score penalizes answers that are too short or too long.\n\nKey points:\n- A clarity score penalizes answers that are too short or too long.\n\n[S39] A clarity score penalizes answers that are too short or too long.\n\nSome of t",
+  "text": "In conclusion I would like to say that Summary: The clarity score rewards answers between roughly 35 and 280 words that use short paragraphs or bullet lists. Very short answers lack detail and score lower, while rambling answers lose focus and also score lower. The ensemble therefore tends to select candidates that state the main point first and keep supporting detail tight.\n\nDetails: A clarity score penalizes answers that are too short or too long.\n\nKey points:\n- A clarity score penalizes answers that are too short or too long.\n\nTradeoff: richer context improves accuracy but can expose identi",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "In conclusion I would like to say that According to [S23], Fact-based questions with local sources get the best results.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that fact-based questions with local sources get the best results... Key points:\n- Fact-based questions with local sources get the best results.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S23], Fact-based questions with local ",
+  "text": "In conclusion I would like to say that Summary: Questions that can be answered from the knowledge_sources/ directory produce the highest quality answers. The ensemble also handles open-ended questions well by presenting multiple perspectives. Complex multi-part questions may need to be broken down for optimal results.\n\nDetails: Fact-based questions with local sources get the best results.\n\nKey points:\n- Fact-based questions with local sources get the best results.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\n[S23] Fact-based que",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -2118,7 +2118,7 @@
   "clarity_score": 0.72
  },
  {
-  "text": "Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nLong documents are automatically split into paragraphs of roughly 850 characters each. Each chunk is indexed separately and can be retrieved independently. This allows the system to find relevant passages from long documents without being overwhelmed by irrelevant content.\n\n[S28] They are split into chunks for retrieval.\n\nKey points:\n- They are split into chunks for retrieval.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "According to [S28], They are split into chunks for retrieval.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that they are split into chunks for retrieval.... Key points:\n- They are split into chunks for retrieval.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -2136,13 +2136,13 @@
   "clarity_score": 0.7
  },
  {
-  "text": "Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a bounded candidate count.\n\nRound-robin keys and retries keep costs stable per query.\n\nKey points:\n- Round-robin keys and retries keep costs stable per query.\n\n[S12] Round-robin keys and retries keep costs stable per query.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "Summary: Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a bounded candidate count.\n\nDetails: Round-robin keys and retries keep costs stable per query.\n\nKey points:\n- Round-robin keys and retries keep costs stable per query.\n\nTradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\n[S12] Round-robin keys and retries keep costs stable per query.\n\nThis is supported by the available sources.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "Each bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages repeated phrases. Lower temperatures give more conservative, predictable answers while higher temperatures explore more. These settings are per-provider, so the ensemble can tune each bot independently. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Each bot call accepts generation settings: temperature controls how random sampling is, top_p and top_k trim the candidate token set, and the repetition penalty discourages repeated phrases. Lower temperatures give more conservative, predictable answers while higher temperatures explore more. These settings are per-provider, so the ensemble can tune each bot independently. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -2154,13 +2154,13 @@
   "clarity_score": 0.74
  },
  {
-  "text": "In conclusion I would like to say that Summary: A multi-LLM ensemble sends one prompt to several independent models in parallel. Each candidate is scored for source support, bias, and clarity, and the best parts are merged into a single answer. This reduces model-specific blind spots because a weak claim from one model is likely to be contradicted by another.\n\nDetails: An ensemble queries several independent models in parallel and merges the best parts.\n\nKey points:\n- An ensemble queries several independent models in parallel and merges the best parts.\n\nTradeoff: broad answers are shallow, dee",
+  "text": "In conclusion I would like to say that A multi-LLM ensemble sends one prompt to several independent models in parallel. Each candidate is scored for source support, bias, and clarity, and the best parts are merged into a single answer. This reduces model-specific blind spots because a weak claim from one model is likely to be contradicted by another.\n\nAn ensemble queries several independent models in parallel and merges the best parts.\n\nKey points:\n- An ensemble queries several independent models in parallel and merges the best parts.\n\n[S1] An ensemble queries several independent models in par",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
  },
  {
-  "text": "According to [S28], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\n\nLong documents are automatically split into paragraphs of roughly 850 characters each. Each chunk is indexed separately and can be retrieved independently. This allows the syst",
+  "text": "According to [S28], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. According to [S28], They are split into chunks for retrieval.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that they are split into chunks for retrieval.... Key points:\n- They are split into chunks for retrieval.\n\nTradeoff: broad ",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -2208,7 +2208,7 @@
   "clarity_score": 0.45
  },
  {
-  "text": "According to [S12], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a bounded c",
+  "text": "According to [S12], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Summary: Provider costs stay predictable because each query runs a fixed number of parallel bot calls and a single synthesis call. Multiple API keys are used in round-robin order, and retries add at most a small number of extra calls. Predictable cost is one reason the ensemble uses a ",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
@@ -2244,7 +2244,7 @@
   "clarity_score": 0.55
  },
  {
-  "text": "Questions that can be answered from the knowledge_sources/ directory produce the highest quality answers. The ensemble also handles open-ended questions well by presenting multiple perspectives. Complex multi-part questions may need to be broken down for optimal results. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "Questions that can be answered from the knowledge_sources/ directory produce the highest quality answers. The ensemble also handles open-ended questions well by presenting multiple perspectives. Complex multi-part questions may need to be broken down for optimal results. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55
@@ -2256,7 +2256,7 @@
   "clarity_score": 0.82
  },
  {
-  "text": "In conclusion I would like to say that Local knowledge grounding helps a chat assistant answer from a trusted, curated corpus. Files in knowledge_sources/ are chunked, tokenized, and retrieved per question using token overlap. Retrieved chunks are quoted to the model as sources, which improves factual support and lets answers cite [S#] markers.\n\nLocal files placed in knowledge_sources/ are chunked and retrieved per question.\n\nKey points:\n- Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\n[S2] Local files placed in knowledge_sources/ are chunked and retrieved pe",
+  "text": "In conclusion I would like to say that Summary: Local knowledge grounding helps a chat assistant answer from a trusted, curated corpus. Files in knowledge_sources/ are chunked, tokenized, and retrieved per question using token overlap. Retrieved chunks are quoted to the model as sources, which improves factual support and lets answers cite [S#] markers.\n\nDetails: Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\nKey points:\n- Local files placed in knowledge_sources/ are chunked and retrieved per question.\n\nTradeoff: broad answers are shallow, deep answers are na",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -2274,13 +2274,13 @@
   "clarity_score": 0.8
  },
  {
-  "text": "According to [S11], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Clarity is measured by length and structure. Answers that are too short lack detail, while answers over a few hundred words lose focus. Structured answers that use short paragraphs or bullet lists score higher. A good answer states the main point first and adds detail only where it hel",
+  "text": "According to [S11], the answer involves many interrelated factors that must be carefully considered in sequence. First, consider the context and the surrounding details. Then reflect on how each factor interacts. After that, weigh the tradeoffs. Finally, arrive at a conclusion that takes everything into account. Tradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\n\nClarity is measured by length and structure. Answers that are too short lack detail, while answers over a few hundred words lose focus. Structured answers that use short paragraphs",
   "source_support": 0.75,
   "bias_score": 0.74,
   "clarity_score": 0.55
  },
  {
-  "text": "In conclusion I would like to say that Source retrieval splits files into paragraphs of roughly 850 characters and scores them by token overlap with the question. Chunks that are self-contained and use consistent vocabulary are easier to match. Breaking long documents into focused sections improves retrieval accuracy.\n\nChunks with clear, self-contained wording match best.\n\nKey points:\n- Chunks with clear, self-contained wording match best.\n\n[S20] Chunks with clear, self-contained wording match best.\n\nSome of this depends on the exact dataset used, so treat it as approximate.\n\nTradeoff: broad a",
+  "text": "In conclusion I would like to say that According to [S20], Chunks with clear, self-contained wording match best.. This is supported by the available sources. The practical upshot is that chunks with clear, self-contained wording match best.... Key points:\n- Chunks with clear, self-contained wording match best.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nConclusion: on balance, the sources support the practical answer above. According to [S20], Chunks with clear, self-contained wording match best.. This is supported by the available ",
   "source_support": 0.7,
   "bias_score": 0.72,
   "clarity_score": 0.5
@@ -2298,7 +2298,7 @@
   "clarity_score": 0.55
  },
  {
-  "text": "Summary: The default weights are 50% source support, 25% bias score, and 25% clarity score. These can be modified in the build_ensemble_answer function to prioritize different aspects. For example, increasing source support weight makes answers more conservative and fact-based.\n\nDetails: Yes, the scoring formula can be adjusted in the code.\n\nKey points:\n- Yes, the scoring formula can be adjusted in the code.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\n\n[S24] Yes, the scoring formula can be adjusted in the code.\n\nThe sources support the core claim, though edge cases may vary.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
+  "text": "According to [S24], Yes, the scoring formula can be adjusted in the code.. Some of this depends on the exact dataset used, so treat it as approximate. The practical upshot is that yes, the scoring formula can be adjusted in the code.... Key points:\n- Yes, the scoring formula can be adjusted in the code.\n\nTradeoff: cheaper models add latency, faster models cost more. Prefer cost when latency is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -2310,13 +2310,13 @@
   "clarity_score": 0.72
  },
  {
-  "text": "The platform tracks an estimated carbon footprint for each query as a sustainability metric. It is one input among several; answer quality, latency, and cost are the primary selection criteria. The carbon estimate should be treated as approximate rather than an audited measurement.\n\nThe sustainability layer tracks estimated carbon usage of each query.\n\nKey points:\n- The sustainability layer tracks estimated carbon usage of each query.\n\n[S7] The sustainability layer tracks estimated carbon usage of each query.\n\nThe evidence here is limited, so this should be read as uncertain.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S7], The sustainability layer tracks estimated carbon usage of each query.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that the sustainability layer tracks estimated carbon usage of ea... Key points:\n- The sustainability layer tracks estimated carbon usage of each query.\n\nTradeoff: broad answers are shallow, deep answers are narrow. Prefer scope when depth is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
  },
  {
-  "text": "Tradeoff: richer context improves accuracy but can expose identifiers. Prefer accuracy when privacy is not critical.\n\nAPI keys generated by the platform are stored as hashes and never as plain text. The dashboard shows the full key once at creation time, then only a masked prefix afterward. If a key is compromised, it can be revoked from the API keys page and a new one issued.\n\n[S14] Keys are hashed, never stored in plain text.\n\nKey points:\n- Keys are hashed, never stored in plain text.\n\nThe evidence here is limited, so this should be read as uncertain.\nConclusion: on balance, the sources support the practical answer above.",
+  "text": "According to [S14], Keys are hashed, never stored in plain text.. The evidence here is limited, so this should be read as uncertain. The practical upshot is that keys are hashed, never stored in plain text.... Key points:\n- Keys are hashed, never stored in plain text.\n\nTradeoff: a quick answer is useful, a thorough one is safer. Prefer speed when thoroughness is not critical.\nIn short: the supported answer is the safe default, with the tradeoff noted above kept in mind.",
   "source_support": 0.82,
   "bias_score": 0.78,
   "clarity_score": 0.85
@@ -2328,7 +2328,7 @@
   "clarity_score": 0.45
  },
  {
-  "text": "When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended. There is no doubt about this. All evidence always agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
+  "text": "When a question can be read several ways, the ensemble states the assumption it uses and answers under that reading. It also notes the alternative interpretation so the user can re-ask. This reduces the chance of answering a different question than the one intended. There is no doubt about this. All evidence obviously agrees. This is the only correct interpretation and everyone should follow it. Anyone who disagrees is simply wrong. This is guaranteed.",
   "source_support": 0.4,
   "bias_score": 0.18,
   "clarity_score": 0.55

@@ -1,16 +1,31 @@
-"""Offline Multi-LLM ensemble demo.
+"""multillm CLI.
 
-Runs the full ensemble architecture using ONLY the locally trained models
-(TinyGPT generator + TinyScorer) — no API keys or network required.
+The installed console-script entry point (`multillm`). Subcommands:
 
-Usage:
-  python3 ensemble_demo.py "Your question here"
-  python3 ensemble_demo.py --sources --top-k 3 "How does an ensemble improve quality?"
+  multillm [query] "Your question here"   Offline ensemble demo (default,
+                                           no API keys/network required)
+  multillm chat                           Interactive chat using real
+                                           provider keys (set OPENAI_API_KEY
+                                           etc. first)
+  multillm train [--epochs N ...]         Train the local generator/scorer
+                                           models from scratch
+  multillm corpus                         Rebuild the synthetic training
+                                           corpus used by `train`
+  multillm eval                           Evaluate the trained generator on
+                                           held-out questions
+  multillm --version                      Show the installed version
+  multillm --help                         Show this message
+
+"query" is implied when the first argument isn't one of the other command
+names (or --version/--help), so `multillm "question"` and
+`multillm --sources "question"` both still work without typing `query`.
 """
 
 from __future__ import annotations
 
 import argparse
+import runpy
+import sys
 import time
 from pathlib import Path
 
@@ -96,13 +111,63 @@ def run_ensemble(query: str, top_k: int, show_sources: bool) -> None:
     print(f"\nElapsed: {time.time() - start:.2f}s (fully offline)")
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Offline Multi-LLM ensemble demo")
-    parser.add_argument("query", nargs="?", default="How does a multi-LLM ensemble improve answer quality?")
+DELEGATED_COMMANDS = {
+    "chat": "ai_client",
+    "train": "train.train",
+    "corpus": "train.dataset",
+    "eval": "train.eval_generator",
+}
+
+
+def _get_version() -> str:
+    try:
+        from importlib.metadata import version
+
+        return version("multillm-ensemble")
+    except Exception:
+        return "development"
+
+
+def _delegate(module_name: str, argv: list[str]) -> None:
+    """Runs another module's own `if __name__ == "__main__":` block, as if
+    invoked via `python -m <module_name> <argv...>` -- reuses each module's
+    existing CLI (train.py's many flags, ai_client.py's REPL) without
+    duplicating or re-declaring their argument parsers here."""
+    old_argv = sys.argv
+    sys.argv = [module_name, *argv]
+    try:
+        runpy.run_module(module_name, run_name="__main__")
+    finally:
+        sys.argv = old_argv
+
+
+def _run_query(argv: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="multillm query", description="Offline Multi-LLM ensemble demo")
+    parser.add_argument("question", nargs="?", default="How does a multi-LLM ensemble improve answer quality?")
     parser.add_argument("--top-k", type=int, default=3)
     parser.add_argument("--sources", action="store_true", help="Show retrieved sources")
-    args = parser.parse_args()
-    run_ensemble(args.query, args.top_k, args.sources)
+    args = parser.parse_args(argv)
+    run_ensemble(args.question, args.top_k, args.sources)
+
+
+def main() -> None:
+    argv = sys.argv[1:]
+
+    if argv and argv[0] in ("-h", "--help"):
+        print(__doc__)
+        return
+    if argv and argv[0] == "--version":
+        print(f"multillm {_get_version()}")
+        return
+    if argv and argv[0] in DELEGATED_COMMANDS:
+        _delegate(DELEGATED_COMMANDS[argv[0]], argv[1:])
+        return
+
+    # No recognized subcommand -- treat the whole thing as `query` args, so
+    # the historical bare-string and --sources/--top-k forms keep working
+    # without requiring the word "query".
+    query_argv = argv[1:] if argv and argv[0] == "query" else argv
+    _run_query(query_argv)
 
 
 if __name__ == "__main__":

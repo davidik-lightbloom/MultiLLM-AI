@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools>=68"]
+# >=77 for PEP 639's simplified `license = "MIT"` string form used below.
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,6 +9,19 @@ version = "0.1.0"
 description = "Multi-LLM ensemble: parallel model answers, scored and synthesized into one cited result."
 readme = "README.md"
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "David" }]
+keywords = ["llm", "ai", "ensemble", "openai", "gemini", "mistral", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "openai",
     "httpx",
@@ -15,11 +29,16 @@ dependencies = [
     "numpy",
 ]
 
+[project.urls]
+Homepage = "https://github.com/imredavid64-glitch/MultiLLM-AI"
+Repository = "https://github.com/imredavid64-glitch/MultiLLM-AI"
+Issues = "https://github.com/imredavid64-glitch/MultiLLM-AI/issues"
+
 [project.scripts]
 multillm = "ensemble_demo:main"
 
 [tool.setuptools]
-py-modules = ["ai_client", "ensemble_demo", "local_models", "token_optimizer"]
+py-modules = ["ai_client", "ensemble_demo", "local_models", "token_optimizer", "prompt_router"]
 packages = ["train"]
 
 [tool.ruff]
