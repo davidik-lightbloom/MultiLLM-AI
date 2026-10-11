@@ -10,16 +10,45 @@ these guard against the two ways it previously broke silently in production
 Requires INTERNAL_API_SECRET to be set before `main` is first imported (it's
 read into a module-level constant at import time), so it's set here, at
 module scope, before the `import main` below.
+
+Import isolation: `main.py`, `local_models.py`, `ai_client.py`,
+`token_optimizer.py`, and `prompt_router.py` all exist as a second,
+vendored copy here (see local_models.py's "VENDORED COPY" docstring for
+why) under the *same* module names as the repo-root originals that
+tests/test_prompt_refiner.py etc. import. When the whole suite runs from
+the repo root, whichever copy gets imported first wins the shared
+`sys.modules` cache for every later bare `import local_models` -- so this
+pops any root-cached entries, forces a fresh import from this directory,
+then restores whatever was cached before. Without the restore, this file's
+vendored `local_models` (whose trained-model files now really exist, see
+the commit that added vercel-deployment/api/query-ensemble/models/) would
+leak into tests/test_prompt_refiner.py's own inline `from local_models
+import ...` calls, silently making its "model unavailable" fallback tests
+exercise real generation instead.
 """
 
 import os
+import sys
+from pathlib import Path
 
 os.environ.setdefault("INTERNAL_API_SECRET", "test-secret")
 
-from fastapi.testclient import TestClient
+_VENDORED_DIR = str(Path(__file__).resolve().parent)
+_SHARED_MODULE_NAMES = ("main", "local_models", "ai_client", "token_optimizer", "prompt_router")
+_saved_modules = {name: sys.modules.pop(name) for name in _SHARED_MODULE_NAMES if name in sys.modules}
+if _VENDORED_DIR in sys.path:
+    sys.path.remove(_VENDORED_DIR)
+sys.path.insert(0, _VENDORED_DIR)
 
-import main
-from local_models import LocalTransformerProvider
+try:
+    import main
+    from local_models import LocalTransformerProvider
+finally:
+    for _name in _SHARED_MODULE_NAMES:
+        sys.modules.pop(_name, None)
+    sys.modules.update(_saved_modules)
+
+from fastapi.testclient import TestClient
 
 AUTH_HEADERS = {"x-internal-secret": os.environ["INTERNAL_API_SECRET"]}
 
