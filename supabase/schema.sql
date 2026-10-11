@@ -106,9 +106,8 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS local_only_mode BOOLEAN NOT
 -- dashboard/billing/page.tsx -- not Stripe; the stripe_customer_id /
 -- stripe_subscription_id columns + idx_subscriptions_stripe_customer index
 -- from an earlier, since-removed Stripe integration are intentionally gone.
--- Pending: this drop still needs to be applied to the live project via
--- apply_migration -- see the matching migration name
--- "drop_unused_stripe_subscription_columns" once it's run.
+-- Dropped live via the "drop_unused_stripe_subscription_columns" migration
+-- (2026-10-11) -- the table had 0 rows, so this was a pure schema cleanup.
 CREATE TABLE IF NOT EXISTS public.subscriptions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,

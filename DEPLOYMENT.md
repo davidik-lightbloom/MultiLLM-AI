@@ -165,6 +165,23 @@ dependencies (`ai_client.py`, `local_models.py`, `token_optimizer.py`,
 `vercel-deployment/api/query-ensemble/`, kept in sync manually with the
 repo-root originals, since this project's Vercel Root Directory is
 `vercel-deployment/` and a deployed function can't read files above it.
+The trained model weights this function needs for local-only mode (Feature
+4) are committed alongside it at `api/query-ensemble/models/` (~11MB) --
+see the `.gitignore` carve-out and the comment on `MODELS_DIR` in
+`local_models.py`; the repo-root `models/` directory stays gitignored and
+is just this function's local build source.
+
+**This function now bundles `torch` (CPU wheel, ~800MB) for local-only
+mode** -- added 2026-10-11, after the repo's own earlier experience with
+`training-job` hitting Vercel's old 500MB Python function limit (see
+"Known gap" below). This session's Vercel platform guidance says Functions
+now support bundles up to 5GB natively, which is why this was judged safe
+to add here too -- but that claim hasn't been verified against an actual
+deploy of *this* function yet. **Watch the first preview deploy after this
+change closely** for the same `ENOENT`-at-packaging failure mode
+`training-job` hit; if it recurs, local-only mode needs the same "move off
+Vercel" treatment discussed below for `training-job`, not more retries of
+the same approach.
 
 - `POST /api/query` - Direct ensemble query
 - `GET /api/health` - Health check
@@ -219,10 +236,12 @@ several minutes, both of which fight the platform's per-function size and
 duration limits by design, not as an incidental bug to route around.
 Railway and Fly.io both run a persistent container with no such
 size/duration ceiling, at a similar hobby-tier price point, and Vercel
-would still front the rest of the app (Next.js + query-ensemble, neither
-of which have this problem) exactly as it does today -- only
-`PYTHON_TRAINING_URL` would point elsewhere. Not attempted this session;
-this is a recommendation, not a migration.
+would still front the rest of the app (Next.js + query-ensemble) exactly
+as it does today -- only `PYTHON_TRAINING_URL` would point elsewhere. Not
+attempted this session; this is a recommendation, not a migration. Note
+query-ensemble no longer fully dodges this either -- it now carries
+`torch` too (see above), just not the duration problem, since inference is
+seconds, not minutes.
 
 ---
 

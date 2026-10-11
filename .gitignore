@@ -45,8 +45,15 @@ vercel-deployment/node_modules/
 vercel-deployment/test-results/
 vercel-deployment/playwright-report/
 
-# Trained model artifacts (reproducible via python -m train.train)
+# Trained model artifacts (reproducible via python -m train.train). The
+# root copy is a local build artifact; the copy inside
+# vercel-deployment/api/query-ensemble/ IS committed -- it's what ships to
+# production for local-only mode (see local_models.py's MODELS_DIR), since
+# that directory is the deployed Python function's entire filesystem root
+# (vercel.json's "backend" service) and nothing outside it is included.
 models/
+!vercel-deployment/api/query-ensemble/models/
+!vercel-deployment/api/query-ensemble/models/**
 
 .vercel
 .env*

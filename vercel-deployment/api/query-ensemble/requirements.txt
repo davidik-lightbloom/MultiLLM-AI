@@ -5,3 +5,10 @@ httpx==0.27.0
 python-dotenv==1.2.3
 cryptography==50.0.1
 sentry-sdk[fastapi]==2.71.0
+# CPU-only wheel for local-only mode's trained TinyGPT/TinyScorer models (see
+# local_models.py). PyPI's own `torch` pulls CUDA kernels and runs 2GB+; the
+# +cpu variant from this index is ~800MB, within Vercel Functions' current
+# 5GB package size limit. Pinned to match the version models were trained
+# and tested against (see repo-root pyproject.toml / train/model.py).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.0+cpu

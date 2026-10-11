@@ -268,6 +268,13 @@ async def query_ensemble(request: QueryRequest, http_request: Request):
 
     bot_count = request.bot_count or BOT_COUNT
     bot_count = max(2, min(MAX_PARALLEL_BOTS, bot_count))
+    # Local-only mode's only provider is the CPU-bound TinyGPT model -- every
+    # "bot" is a separate from-scratch generation on the same model, so more
+    # bots means more CPU contention (not more real diversity of opinion)
+    # and a real risk of blowing past this function's maxDuration. Floor of
+    # 2 (not 1) to keep the ensemble's compare/score-candidates step meaningful.
+    if request.local_only:
+        bot_count = min(bot_count, 2)
 
     privacy_redaction = request.privacy_redaction if request.privacy_redaction is not None else PRIVACY_REDACTION
 
@@ -376,6 +383,9 @@ async def query_ensemble_stream(request: QueryRequest, http_request: Request):
 
     bot_count = request.bot_count or BOT_COUNT
     bot_count = max(2, min(MAX_PARALLEL_BOTS, bot_count))
+    # See the matching comment in query_ensemble() above.
+    if request.local_only:
+        bot_count = min(bot_count, 2)
     privacy_redaction = request.privacy_redaction if request.privacy_redaction is not None else PRIVACY_REDACTION
 
     async def event_source():

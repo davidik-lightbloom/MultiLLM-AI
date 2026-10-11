@@ -1,6 +1,11 @@
 """VENDORED COPY -- kept in sync manually with the repo-root local_models.py.
 See ai_client.py in this same directory for why.
 
+One deliberate divergence: LocalTransformerProvider's default max_tokens is
+lower here than in the repo-root copy, because only this copy runs under a
+hard wall-clock budget (Vercel's maxDuration) -- see the comment on that
+default below before "fixing" it back to match.
+
 Integration layer: trained Multi-LLM models inside the ensemble.
 
 Adds two capabilities to the ai_client.py architecture:
@@ -173,7 +178,14 @@ class LocalTransformerProvider:
     Falls back gracefully when the trained model is missing.
     """
 
-    def __init__(self, temperature: float = 0.7, max_tokens: int = 450) -> None:
+    # 450 (this model's old default, still used by the offline CLI -- see
+    # the repo-root copy of this file) is too slow for the deployed FastAPI
+    # path: measured ~150ms/token on CPU, so 450 tokens is ~68s -- past both
+    # PROVIDER_TIMEOUT_SECONDS' default (20s) and this function's own
+    # maxDuration (60s, vercel.json), especially once candidate generation
+    # (parallel) and synthesis (sequential, same model) both have to fit in
+    # that budget. 100 tokens (~15s/generation) leaves real margin.
+    def __init__(self, temperature: float = 0.7, max_tokens: int = 100) -> None:
         self.name = "Local TinyGPT (from scratch)"
         self.model = "ensemble-generator (6-layer TinyGPT)"
         self.temperature = temperature

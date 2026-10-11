@@ -1,0 +1,8 @@
+{
+ "vocab_size": 1117,
+ "block_size": 512,
+ "n_layer": 6,
+ "n_head": 4,
+ "n_embd": 128,
+ "kind": "generator"
+}
