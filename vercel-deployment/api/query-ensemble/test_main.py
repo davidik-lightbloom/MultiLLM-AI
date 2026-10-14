@@ -61,6 +61,17 @@ def test_local_transformer_provider_default_token_budget_fits_timeout():
     assert LocalTransformerProvider().max_tokens <= 150
 
 
+def test_build_provider_stack_excludes_local_model_by_default():
+    """The local model only ever scored ~0.006 avg error on its own trained
+    TinyScorer and is far rougher than a real provider's answer (see
+    train/data/corpus.json) -- it must never round-robin into the default
+    ensemble's bot/provider assignment and compete for "Best Answer" against
+    genuine OpenAI/Gemini/Mistral/Groq responses. Only local_only=True may
+    return it (see the next test)."""
+    default_stack = main.build_provider_stack()
+    assert "Local TinyGPT (from scratch)" not in {p.name for p in default_stack}
+
+
 def test_resolve_request_providers_uses_local_model_when_available():
     request = main.QueryRequest(prompt="hello", local_only=True)
     providers = main._resolve_request_providers(request)

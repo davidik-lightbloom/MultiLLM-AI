@@ -242,19 +242,22 @@ def _resolve_request_providers(request: "QueryRequest"):
     provider stack for this one request, honoring BYO keys and local-only
     mode. Never built once at module scope -- it must never be shared across
     requests/users. request.provider_keys itself is never logged (only which
-    providers ended up in use, by name)."""
+    providers ended up in use, by name).
+
+    local_only=True rebuilds via build_provider_stack(local_only=True)
+    rather than filtering the general `providers`/BYO stack by name --
+    build_provider_stack() deliberately excludes the local model from the
+    general stack (see its own comment), so it would never be found there
+    to filter back out."""
+    if request.local_only:
+        try:
+            return build_provider_stack(user_keys=request.provider_keys, local_only=True)
+        except RuntimeError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+
     request_providers = providers
     if request.provider_keys:
         request_providers = build_provider_stack(user_keys=request.provider_keys) or providers
-
-    if request.local_only:
-        request_providers = [p for p in request_providers if getattr(p, "name", "") == "Local TinyGPT (from scratch)"]
-        if not request_providers:
-            raise HTTPException(
-                status_code=503,
-                detail="Local-only mode requested, but no local model is available. Run `python -m train.train` first.",
-            )
-        return request_providers
 
     if not request_providers:
         raise HTTPException(status_code=503, detail="No providers configured. Set API keys.")

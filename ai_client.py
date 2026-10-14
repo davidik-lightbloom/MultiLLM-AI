@@ -1125,7 +1125,6 @@ def build_provider_stack(
         candidate = LocalTransformerProvider()
         if candidate.size():
             local_provider = candidate
-            providers.append(candidate)
     except Exception as exc:
         logger.debug("Local model provider unavailable: %s", exc)
 
@@ -1133,6 +1132,16 @@ def build_provider_stack(
         if local_provider is None:
             raise RuntimeError("Local-only mode requested, but no local model is available. Run: python -m train.train")
         return [local_provider]
+
+    # local_provider is deliberately NOT added to `providers` here: it's a
+    # tiny, undertrained model (see train/data/corpus.json) whose answers
+    # are noticeably rougher than a real provider's. Mixing it into the
+    # default ensemble let it round-robin into the bot/provider assignment
+    # (generate_candidates' `idx % len(providers)`) and occasionally win
+    # "Best Answer" over genuine OpenAI/Gemini/Mistral/Groq responses via
+    # the scoring step -- surprising and bad for any query that wasn't
+    # explicitly asking for local-only mode. It stays reserved for
+    # local_only=True, its original documented purpose above.
 
     user_openai_keys = user_keys.get("openai") or user_keys.get("openrouter")
     platform_openai_keys = load_keys_from_env(
