@@ -221,8 +221,13 @@ class LocalTransformerProvider:
         with torch.no_grad():
             out = model.generate(seed, max_new_tokens=max_tokens, temperature=temp, top_k=40, repetition_penalty=1.3)
         text = tokenizer.decode(out[0].tolist()[len(seed_ids) :])
-        # Trim trailing special tokens or repeated block markers.
-        for marker in ("<|end|>", "<|endoftext|>", "<|user|>"):
+        # Trim trailing special tokens or repeated block markers. generate()
+        # never stops early (see train/model.py), so an undertrained/
+        # out-of-domain continuation commonly wanders into a hallucinated
+        # next training example -- "<|assistant|>" marks that example's own
+        # turn boundary, same as "<|user|>" marks its start, so both must be
+        # trimmed.
+        for marker in ("<|end|>", "<|endoftext|>", "<|user|>", "<|assistant|>"):
             idx = text.find(marker)
             if idx != -1:
                 text = text[:idx]
@@ -258,7 +263,7 @@ def refine_prompt(raw_prompt: str, max_new_tokens: int = 40) -> str:
         with torch.no_grad():
             out = model.generate(seed, max_new_tokens=max_new_tokens, temperature=0.3, top_k=20, repetition_penalty=1.2)
         text = tokenizer.decode(out[0].tolist()[len(seed_ids) :])
-        for marker in ("<|end|>", "<|endoftext|>", "<|user|>"):
+        for marker in ("<|end|>", "<|endoftext|>", "<|user|>", "<|assistant|>"):
             idx = text.find(marker)
             if idx != -1:
                 text = text[:idx]

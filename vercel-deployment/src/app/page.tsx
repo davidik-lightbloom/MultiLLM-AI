@@ -20,6 +20,18 @@ const quickPrompts = [
   "How can I reduce my carbon footprint?",
 ];
 
+// The local-only trained model is a tiny 6-layer transformer trained only on
+// Q&A about MultiLLM's own internals (see train/data/corpus.json) -- it has
+// no general-knowledge training data, so the prompts above produce incoherent
+// output when local-only mode is on. These are real corpus questions (each
+// appears ~20x with consistent, on-topic answers) so local-only mode's quick
+// prompts actually showcase what this model can do well.
+const LOCAL_ONLY_QUICK_PROMPTS = [
+  "How does the ensemble handle conflicting answers from different models?",
+  "What happens to private information in prompts and replies?",
+  "What are the limits of the tiny local models?",
+];
+
 // Feature 2: human-readable labels for the pipeline stages streamed back
 // before synthesis tokens start arriving -- the parallel bot/scoring phases
 // aren't themselves token-streamed, so this is what fills that wait.
@@ -262,7 +274,11 @@ export default function HomePage() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask anything... (e.g., 'Explain quantum computing')"
+              placeholder={
+                localOnly
+                  ? "Ask about MultiLLM itself... (e.g., 'How are provider keys managed?')"
+                  : "Ask anything... (e.g., 'Explain quantum computing')"
+              }
               className="flex-1 px-6 py-4 rounded-xl border border-slate-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all text-lg"
               disabled={isLoading}
             />
@@ -301,6 +317,17 @@ export default function HomePage() {
               </span>
             )}
           </div>
+
+          {/* The trained generator is a tiny 6-layer transformer trained
+              from scratch on ~2,300 examples (see train/data/corpus.json) --
+              it genuinely runs with zero API cost and zero data leaving the
+              device, but its answers are noticeably rougher than the paid
+              ensemble's. Set expectations rather than let it read as broken. */}
+          {localOnly && (
+            <p className="mt-2 text-center text-xs text-slate-400">
+              Experimental: a tiny from-scratch model answers locally, so phrasing may be rough. Shown to demonstrate zero-cost, fully private queries.
+            </p>
+          )}
 
           {projects.length > 0 && (
             <div className="mt-3 flex items-center justify-center gap-2">
@@ -345,11 +372,13 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Quick prompts */}
+          {/* Quick prompts -- swapped to in-domain questions under local-only
+              mode, since the tiny local model only knows how to answer
+              questions about MultiLLM itself (see LOCAL_ONLY_QUICK_PROMPTS). */}
           <div className="mt-5">
             <p className="text-sm font-medium text-slate-500 mb-3">Try a quick prompt:</p>
             <div className="flex flex-wrap justify-center gap-3">
-              {quickPrompts.map((prompt) => (
+              {(localOnly ? LOCAL_ONLY_QUICK_PROMPTS : quickPrompts).map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
