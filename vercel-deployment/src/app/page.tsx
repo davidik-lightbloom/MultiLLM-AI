@@ -586,7 +586,7 @@ export default function HomePage() {
             <h2 className="text-2xl font-bold text-slate-900">Tested, honestly</h2>
           </div>
           <p className="text-slate-600 max-w-xl mx-auto mb-6">
-            76/76 unit tests passing, and a from-scratch-trained scoring model with 0.006 avg. error — plus the
+            91/91 unit tests passing, and a from-scratch-trained scoring model with 0.006 avg. error — plus the
             parts that didn&apos;t come out great, unedited.
           </p>
           <a href="/test-results" className="text-purple-600 font-semibold hover:text-purple-700 inline-flex items-center gap-1">

@@ -37,7 +37,7 @@ export default function TestResultsPage() {
 
       <div className="grid sm:grid-cols-3 gap-4 mb-12">
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 text-center">
-          <div className="text-3xl font-bold text-emerald-600">76/76</div>
+          <div className="text-3xl font-bold text-emerald-600">91/91</div>
           <div className="text-sm text-slate-500 mt-1">Unit tests passing</div>
         </div>
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 text-center">
@@ -100,9 +100,9 @@ export default function TestResultsPage() {
             naming a tradeoff, flagging uncertainty — equally well on questions it trained on and ones it never
             saw. What it hasn&apos;t learned is fluent prose: raw output reads more like word-fragments than
             coherent sentences. That&apos;s an honest consequence of the model&apos;s size and training-data
-            scale, not a bug — and it matters less than it sounds, since this is one candidate among several
-            (real providers are the primary candidates when configured), and the scorer above is what actually
-            ranks them.
+            scale, not a bug — and we don&apos;t rely on the scorer to catch it: this candidate is only ever
+            generated when Local-only mode is explicitly turned on. It never competes against real provider
+            answers in the default ensemble.
           </p>
         </div>
       </section>
