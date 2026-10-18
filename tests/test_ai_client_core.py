@@ -19,6 +19,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ai_client import (
     RoundRobinKeys,
     SourceChunk,
+    SourceIndex,
+    _compute_idf,
+    _term_frequencies,
     _tiered_keys,
     bias_score,
     build_ensemble_answer,
@@ -352,3 +355,64 @@ def test_build_ensemble_answer_raises_when_every_provider_fails():
             bot_count=2,
             privacy_redaction=False,
         )
+
+
+# ---------------------------------------------------------------------------
+# SourceIndex.retrieve
+# ---------------------------------------------------------------------------
+
+
+def _build_index(doc_texts: Dict[str, str]) -> SourceIndex:
+    index = SourceIndex(Path("unused"))
+    chunks = [
+        SourceChunk(
+            source_id=source_id,
+            path=Path(f"{source_id}.md"),
+            text=text,
+            tokens=set(tokenize(text)),
+            tf=_term_frequencies(tokenize(text)),
+            length=len(tokenize(text)),
+        )
+        for source_id, text in doc_texts.items()
+    ]
+    index.chunks = chunks
+    index._idf = _compute_idf(chunks)
+    index._avg_len = sum(c.length for c in chunks) / len(chunks) if chunks else 0.0
+    return index
+
+
+def test_retrieve_ignores_a_single_incidental_word_overlap():
+    # Real production bug, reproduced against knowledge_sources/ensemble.md's
+    # actual wording: "What is 2+2? Respond in one word." shares no topical
+    # words with this doc at all, but it does share "one" ("...merges the
+    # best parts into one final response.") -- a single generic word was
+    # previously enough for _compute_idf's always-positive floor to make this
+    # doc look "relevant" and get quoted at the model as grounding for a
+    # completely unrelated question (see the comment above the min_matches
+    # logic in retrieve()).
+    index = _build_index(
+        {
+            "S1": (
+                "The platform queries several independent large language models in parallel for a "
+                "single user prompt, then merges the best parts into one final response."
+            )
+        }
+    )
+    assert index.retrieve("What is 2+2? Respond in one word.") == []
+
+
+def test_retrieve_still_matches_genuine_multi_term_overlap():
+    index = _build_index(
+        {
+            "S1": "The ensemble platform scores each candidate answer for source support, bias, and clarity.",
+            "S2": "Completely unrelated content about gardening and houseplants.",
+        }
+    )
+    results = index.retrieve("How does the ensemble platform score candidate answers?")
+    assert [chunk.source_id for chunk in results] == ["S1"]
+
+
+def test_retrieve_single_word_query_only_needs_one_match():
+    index = _build_index({"S1": "Gardening tips for houseplants."})
+    results = index.retrieve("gardening")
+    assert [chunk.source_id for chunk in results] == ["S1"]

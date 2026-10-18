@@ -1372,9 +1372,21 @@ class SourceIndex:
             return []
 
         q_tf = _term_frequencies(q_tokens)
+        unique_q_tokens = set(q_tf)
+        # With this corpus's handful of short, self-describing docs (see
+        # knowledge_sources/), _compute_idf's "1.0 + log(...)" floor keeps
+        # idf positive for nearly every term, so a single incidental shared
+        # word (e.g. "name") was enough to pull in an irrelevant doc as
+        # "context" for a completely unrelated question -- the same failure
+        # mode the stopword list above was added for, just one level deeper.
+        # Require at least two distinct overlapping terms (or the query's
+        # only term, for one-word queries) as weak-but-real corroboration.
+        min_matches = 1 if len(unique_q_tokens) <= 1 else 2
         scored: List[Tuple[float, SourceChunk]] = []
         avg_len = self._avg_len or 1.0
         for chunk in self.chunks:
+            if len(unique_q_tokens & chunk.tokens) < min_matches:
+                continue
             score = _bm25_score(chunk, q_tf, self._idf, avg_len)
             if score <= 0.0:
                 continue

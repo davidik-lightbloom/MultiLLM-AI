@@ -248,7 +248,7 @@ def refine_prompt(raw_prompt: str, max_new_tokens: int = 40) -> str:
         return raw_prompt
 
     try:
-        from ai_client import redact_sensitive
+        from ai_client import redact_sensitive, tokenize
 
         tokenizer = _LOCAL.refiner_tokenizer()
         model = _LOCAL.refiner()
@@ -268,7 +268,22 @@ def refine_prompt(raw_prompt: str, max_new_tokens: int = 40) -> str:
             if idx != -1:
                 text = text[:idx]
         text = text.strip()
-        return text or raw_prompt
+        if not text:
+            return raw_prompt
+
+        # This is a tiny, from-scratch TinyGPT (same one flagged elsewhere in
+        # this codebase as "noticeably rougher" than a real provider) -- it
+        # occasionally hallucinates an unrelated question instead of
+        # rephrasing the real one, e.g. "What is 2+2?" -> "How do I keep
+        # provider costs predictable?". That hallucination then silently
+        # replaces the user's actual question for both retrieval and every
+        # real provider call. A genuine rephrasing keeps at least one real
+        # content word from the original; zero overlap means it drifted, so
+        # discard it rather than let it override what the user actually asked.
+        raw_tokens = set(tokenize(raw_prompt))
+        if raw_tokens and not (raw_tokens & set(tokenize(text))):
+            return raw_prompt
+        return text
     except Exception:
         return raw_prompt
 

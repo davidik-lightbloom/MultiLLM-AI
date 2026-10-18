@@ -121,6 +121,56 @@ def test_refine_prompt_falls_back_on_generation_error(monkeypatch):
     assert refine_prompt("raw question here") == "raw question here"
 
 
+class _FakeParam:
+    device = "cpu"
+
+
+class _FakeRefinerModel:
+    def parameters(self):
+        return iter([_FakeParam()])
+
+    def generate(self, *args, **kwargs):
+        return torch.tensor([[0]])
+
+
+def _fake_tokenizer_returning(text: str):
+    class FakeTokenizer:
+        def encode(self, _text):
+            return [0]
+
+        def decode(self, _ids):
+            return text
+
+    return FakeTokenizer()
+
+
+def test_refine_prompt_discards_a_hallucinated_unrelated_rewrite(monkeypatch):
+    """Real production bug: the undertrained refiner once turned "What is
+    2+2? Respond in one word." into "How do I keep provider costs
+    predictable?" -- a completely unrelated hallucination that then silently
+    became the real question sent to every provider. Zero word overlap with
+    the raw prompt should be rejected in favor of the original."""
+    from local_models import _LOCAL, refine_prompt
+
+    monkeypatch.setattr(_LOCAL, "refiner_available", lambda: True)
+    monkeypatch.setattr(
+        _LOCAL, "refiner_tokenizer", lambda: _fake_tokenizer_returning("How do I keep provider costs predictable?")
+    )
+    monkeypatch.setattr(_LOCAL, "refiner", lambda: _FakeRefinerModel())
+
+    assert refine_prompt("What is 2+2? Respond in one word.") == "What is 2+2? Respond in one word."
+
+
+def test_refine_prompt_keeps_a_genuine_rewrite_with_shared_content_words(monkeypatch):
+    from local_models import _LOCAL, refine_prompt
+
+    monkeypatch.setattr(_LOCAL, "refiner_available", lambda: True)
+    monkeypatch.setattr(_LOCAL, "refiner_tokenizer", lambda: _fake_tokenizer_returning("How does the ensemble platform work?"))
+    monkeypatch.setattr(_LOCAL, "refiner", lambda: _FakeRefinerModel())
+
+    assert refine_prompt("um so how does the ensemble thing work") == "How does the ensemble platform work?"
+
+
 @pytest.mark.skipif(
     not (Path(__file__).resolve().parent.parent / "models" / "prompt-refiner" / "model.pt").exists(),
     reason="prompt-refiner model not trained yet (run: python -m train.train --kind refiner)",
