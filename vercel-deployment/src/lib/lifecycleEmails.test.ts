@@ -2,11 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   tryClaimLifecycleEmail: vi.fn(),
+  releaseLifecycleEmailClaim: vi.fn(),
   sendEmail: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/services", () => ({
   tryClaimLifecycleEmail: mocks.tryClaimLifecycleEmail,
+  releaseLifecycleEmailClaim: mocks.releaseLifecycleEmailClaim,
 }));
 vi.mock("@/lib/email", () => ({
   sendEmail: mocks.sendEmail,
@@ -27,6 +29,7 @@ const PROFILE = {
 describe("lifecycleEmails", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.sendEmail.mockResolvedValue(undefined);
   });
 
   it("sends the welcome email once a claim succeeds", async () => {
@@ -59,6 +62,15 @@ describe("lifecycleEmails", () => {
     mocks.tryClaimLifecycleEmail.mockResolvedValue(false);
     await maybeSendLowCreditsEmail(PROFILE, 5);
     expect(mocks.sendEmail).not.toHaveBeenCalled();
+  });
+
+  it("releases the claim when the send itself fails, so a later attempt can retry", async () => {
+    mocks.tryClaimLifecycleEmail.mockResolvedValue(true);
+    mocks.sendEmail.mockRejectedValue(new Error("RESEND_API_KEY and EMAIL_FROM must both be set to send email in production."));
+
+    await expect(sendWelcomeEmailOnce(PROFILE)).rejects.toThrow();
+
+    expect(mocks.releaseLifecycleEmailClaim).toHaveBeenCalledWith("user-1", "welcome", "once");
   });
 
   it("sends the plan-expiring email once", async () => {

@@ -1,7 +1,29 @@
 import { sendEmail } from "@/lib/email";
 import { welcomeEmail, lowCreditsEmail, planExpiringEmail } from "@/lib/emailTemplates";
-import { tryClaimLifecycleEmail } from "@/lib/supabase/services";
+import { tryClaimLifecycleEmail, releaseLifecycleEmailClaim } from "@/lib/supabase/services";
 import { PLAN_CREDIT_ALLOWANCES, type PlanId } from "@/lib/credits";
+
+// Claims the slot, then sends -- if the send itself throws (missing Resend
+// config, Resend outage, etc.), releases the claim so a later attempt isn't
+// permanently blocked by a send that never actually happened. Rethrows so
+// each call site's existing catch/log behavior is unchanged.
+async function sendClaimedEmail(
+  userId: string,
+  emailType: string,
+  periodKey: string,
+  build: () => { subject: string; text: string },
+  to: string
+): Promise<void> {
+  const claimed = await tryClaimLifecycleEmail(userId, emailType, periodKey);
+  if (!claimed) return;
+  try {
+    const { subject, text } = build();
+    await sendEmail({ to, subject, text });
+  } catch (err) {
+    await releaseLifecycleEmailClaim(userId, emailType, periodKey);
+    throw err;
+  }
+}
 
 interface ProfileLike {
   id: string;
@@ -17,10 +39,7 @@ interface ProfileLike {
 const LOW_CREDITS_RATIO = 0.1;
 
 export async function sendWelcomeEmailOnce(profile: ProfileLike): Promise<void> {
-  const claimed = await tryClaimLifecycleEmail(profile.id, "welcome", "once");
-  if (!claimed) return;
-  const { subject, text } = welcomeEmail({ name: profile.name });
-  await sendEmail({ to: profile.email, subject, text });
+  await sendClaimedEmail(profile.id, "welcome", "once", () => welcomeEmail({ name: profile.name }), profile.email);
 }
 
 /**
@@ -33,17 +52,23 @@ export async function maybeSendLowCreditsEmail(profile: ProfileLike, remainingCr
   const allowance = PLAN_CREDIT_ALLOWANCES[profile.plan] ?? PLAN_CREDIT_ALLOWANCES.free;
   if (remainingCredits >= allowance * LOW_CREDITS_RATIO) return;
 
-  const claimed = await tryClaimLifecycleEmail(profile.id, "low_credits", profile.credits_period_start);
-  if (!claimed) return;
-  const { subject, text } = lowCreditsEmail({ name: profile.name, creditsRemaining: remainingCredits, plan: profile.plan });
-  await sendEmail({ to: profile.email, subject, text });
+  await sendClaimedEmail(
+    profile.id,
+    "low_credits",
+    profile.credits_period_start,
+    () => lowCreditsEmail({ name: profile.name, creditsRemaining: remainingCredits, plan: profile.plan }),
+    profile.email
+  );
 }
 
 export async function maybeSendPlanExpiringEmail(profile: ProfileLike): Promise<void> {
   if (!profile.plan_expires_at) return;
 
-  const claimed = await tryClaimLifecycleEmail(profile.id, "plan_expiring", profile.plan_expires_at);
-  if (!claimed) return;
-  const { subject, text } = planExpiringEmail({ name: profile.name, planExpiresAt: profile.plan_expires_at });
-  await sendEmail({ to: profile.email, subject, text });
+  await sendClaimedEmail(
+    profile.id,
+    "plan_expiring",
+    profile.plan_expires_at,
+    () => planExpiringEmail({ name: profile.name, planExpiresAt: profile.plan_expires_at as string }),
+    profile.email
+  );
 }

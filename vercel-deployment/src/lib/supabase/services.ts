@@ -313,6 +313,17 @@ export async function tryClaimLifecycleEmail(userId: string, emailType: string, 
   return false;
 }
 
+// Releases a claim taken by tryClaimLifecycleEmail when the actual send
+// afterward fails -- without this, a transient sendEmail failure (e.g.
+// RESEND_API_KEY missing, Resend briefly down) would leave the claim row in
+// place forever, permanently preventing any future retry for that
+// (userId, emailType, periodKey), since "welcome"'s periodKey is "once".
+// Best-effort: if the delete itself fails there's nothing more useful to do
+// than let the original send error propagate.
+export async function releaseLifecycleEmailClaim(userId: string, emailType: string, periodKey: string): Promise<void> {
+  await supabaseServer.from('sent_emails').delete().eq('user_id', userId).eq('email_type', emailType).eq('period_key', periodKey);
+}
+
 // Records a failed query attempt (ensemble unavailable, no remote provider
 // answered, etc.) so scripts/usage-report.mjs can report real per-account
 // error counts. Best-effort: a failure here should never surface as the
