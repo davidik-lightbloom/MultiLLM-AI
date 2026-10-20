@@ -37,7 +37,11 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install -U pip
-          pip install openai httpx torch numpy pytest pytest-cov black ruff mypy
+          # requirements.txt pins black/ruff/mypy exactly -- installing them
+          # unpinned here let CI silently pull a newer black than anyone
+          # tested against and fail on pre-existing code (see the "Python
+          # Tests" CI-gate-fix commit this comment was added in).
+          pip install -r requirements.txt
       
       - name: Run Python linting (ruff)
         run: |

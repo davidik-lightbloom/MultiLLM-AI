@@ -165,7 +165,9 @@ def test_refine_prompt_keeps_a_genuine_rewrite_with_shared_content_words(monkeyp
     from local_models import _LOCAL, refine_prompt
 
     monkeypatch.setattr(_LOCAL, "refiner_available", lambda: True)
-    monkeypatch.setattr(_LOCAL, "refiner_tokenizer", lambda: _fake_tokenizer_returning("How does the ensemble platform work?"))
+    monkeypatch.setattr(
+        _LOCAL, "refiner_tokenizer", lambda: _fake_tokenizer_returning("How does the ensemble platform work?")
+    )
     monkeypatch.setattr(_LOCAL, "refiner", lambda: _FakeRefinerModel())
 
     assert refine_prompt("um so how does the ensemble thing work") == "How does the ensemble platform work?"
