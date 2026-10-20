@@ -416,3 +416,19 @@ def test_retrieve_single_word_query_only_needs_one_match():
     index = _build_index({"S1": "Gardening tips for houseplants."})
     results = index.retrieve("gardening")
     assert [chunk.source_id for chunk in results] == ["S1"]
+
+
+def test_retrieve_rejects_a_sentence_that_merely_reduces_to_one_word():
+    # Real production bug, confirmed live: "What time is it?" tokenizes to
+    # just ["time"] once stopwords ("what", "is", "it") are stripped, which
+    # previously satisfied the one-word-query exception meant for someone
+    # literally typing a single word like "ensemble" -- letting "time" (an
+    # incidental word in this doc's prose, not its topic) pull the doc in as
+    # a "source" for a question about the current time. The one-word
+    # exception must key off the raw query actually being one word, not the
+    # post-stopword-filtering token count.
+    index = _build_index({"S1": "Adding relevant files improves grounding over time."})
+    assert index.retrieve("What time is it?") == []
+    # A genuinely single-word query for the same incidental term still
+    # matches -- the exception itself isn't removed, just correctly scoped.
+    assert [c.source_id for c in index.retrieve("time")] == ["S1"]

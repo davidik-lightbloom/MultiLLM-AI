@@ -1375,7 +1375,16 @@ class SourceIndex:
         # mode the stopword list above was added for, just one level deeper.
         # Require at least two distinct overlapping terms (or the query's
         # only term, for one-word queries) as weak-but-real corroboration.
-        min_matches = 1 if len(unique_q_tokens) <= 1 else 2
+        # "One-word query" must mean the user actually typed one word --
+        # checking len(unique_q_tokens) instead let a full sentence that
+        # merely *reduces* to one content word after stopword-stripping
+        # (e.g. "What time is it?" -> just "time") sneak through the same
+        # single-match loophole: confirmed live, "time" has identical
+        # document frequency/idf here as the genuinely topical "ensemble",
+        # so it pulled in two unrelated docs as "sources" for a question
+        # about the current time.
+        raw_word_count = len(TOKEN_RE.findall(query))
+        min_matches = 1 if raw_word_count <= 1 else 2
         scored: List[Tuple[float, SourceChunk]] = []
         avg_len = self._avg_len or 1.0
         for chunk in self.chunks:
