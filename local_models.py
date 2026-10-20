@@ -264,8 +264,13 @@ def refine_prompt(raw_prompt: str, max_new_tokens: int = 40) -> str:
         # real provider call. A genuine rephrasing keeps at least one real
         # content word from the original; zero overlap means it drifted, so
         # discard it rather than let it override what the user actually asked.
+        # A short/numeric-only prompt (tokenize() drops stopwords and
+        # numbers, so e.g. "What is 2+2?" yields no tokens at all) has no
+        # content word to check overlap against -- treat that the same as
+        # zero overlap rather than letting the check silently no-op and
+        # wave every such rewrite through unchecked.
         raw_tokens = set(tokenize(raw_prompt))
-        if raw_tokens and not (raw_tokens & set(tokenize(text))):
+        if not (raw_tokens & set(tokenize(text))):
             return raw_prompt
         return text
     except Exception:

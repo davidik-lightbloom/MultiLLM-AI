@@ -161,6 +161,25 @@ def test_refine_prompt_discards_a_hallucinated_unrelated_rewrite(monkeypatch):
     assert refine_prompt("What is 2+2? Respond in one word.") == "What is 2+2? Respond in one word."
 
 
+def test_refine_prompt_discards_a_hallucination_when_raw_prompt_has_no_content_words(monkeypatch):
+    """The overlap check above tokenizes the raw prompt and only rejects the
+    rewrite if that's nonempty AND disjoint from the rewrite's tokens -- a
+    short/numeric-only prompt like the bare "What is 2+2?" (no "Respond in
+    one word." tail) tokenizes to nothing at all, so that guard silently
+    no-opped and let any hallucination through unchecked. Confirmed against
+    production: this exact prompt was still getting hijacked after the fix
+    above landed."""
+    from local_models import _LOCAL, refine_prompt
+
+    monkeypatch.setattr(_LOCAL, "refiner_available", lambda: True)
+    monkeypatch.setattr(
+        _LOCAL, "refiner_tokenizer", lambda: _fake_tokenizer_returning("does the system use renewable energy?")
+    )
+    monkeypatch.setattr(_LOCAL, "refiner", lambda: _FakeRefinerModel())
+
+    assert refine_prompt("What is 2+2?") == "What is 2+2?"
+
+
 def test_refine_prompt_keeps_a_genuine_rewrite_with_shared_content_words(monkeypatch):
     from local_models import _LOCAL, refine_prompt
 
