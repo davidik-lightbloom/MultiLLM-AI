@@ -53,7 +53,12 @@ jobs:
 
       - name: Run Python tests
         run: |
-          pytest -v
+          # vercel-deployment/ has its own Python function with its own
+          # requirements.txt (e.g. sentry-sdk), tested separately by the
+          # "Python Functions Test" job below -- pytest's default discovery
+          # would otherwise also collect its test_main.py here and fail on
+          # a missing import, same exclusion as the ruff/black steps above.
+          pytest -v --ignore=vercel-deployment
 
   # Next.js build and test
   nextjs-build:
@@ -140,29 +145,39 @@ jobs:
           # The vendored copy's header isn't a clean, identically-styled
           # block across files: ai_client.py prepends plain "#" comment
           # lines (clean prefix), but local_models.py/token_optimizer.py
-          # splice extra lines into the leading docstring, which moves the
-          # opening `"""` onto its own line -- the first real content line
-          # is otherwise identical but differs by that one quote mark.
-          # Compare by length (vendored should be exactly the root file's
-          # header longer, its last N lines = root's N lines) and strip `"`
-          # before diffing so that one-character docstring-reflow quirk
-          # doesn't count as drift, while any real content change (which
-          # would still differ character-for-character elsewhere) still
-          # fails the build.
+          # splice extra lines into the leading docstring. Comment-only
+          # lines ("#...") and `"` characters are stripped from BOTH sides
+          # before comparing (so docstring-reflow and the header itself
+          # drop out identically), then the vendored side is trimmed to the
+          # (now comment-stripped) root's line count so only the shared
+          # tail is compared. The vendored copies are allowed to carry
+          # extra Vercel-specific context in comments (e.g. where a log
+          # line ends up) without that counting as drift -- only code lines
+          # must match.
           check_vendored() {
-            local root_file="$1" vendored_file="$2"
-            local root_lines
-            root_lines=$(wc -l < "$root_file")
-            if ! diff -q <(tr -d '"' < "$root_file") <(tail -n "$root_lines" "$vendored_file" | tr -d '"') > /dev/null; then
-              echo "::error::$vendored_file has diverged from $root_file beyond its VENDORED COPY header. Re-sync it manually."
-              diff "$root_file" <(tail -n "$root_lines" "$vendored_file") || true
+            local root_file="$1" vendored_file="$2" root_sed="${3:-}"
+            local root_content vendored_content root_lines
+            root_content=$(grep -v '^[[:space:]]*#' "$root_file" | tr -d '"')
+            if [ -n "$root_sed" ]; then
+              root_content=$(printf '%s\n' "$root_content" | sed "$root_sed")
+            fi
+            vendored_content=$(grep -v '^[[:space:]]*#' "$vendored_file" | tr -d '"')
+            root_lines=$(printf '%s\n' "$root_content" | wc -l)
+            if ! diff -q <(printf '%s\n' "$root_content") <(printf '%s\n' "$vendored_content" | tail -n "$root_lines") > /dev/null; then
+              echo "::error::$vendored_file has diverged from $root_file beyond its VENDORED COPY header and allowed comment differences. Re-sync it manually."
+              diff <(printf '%s\n' "$root_content") <(printf '%s\n' "$vendored_content" | tail -n "$root_lines") || true
               exit 1
             fi
-            echo "OK: $vendored_file's last $root_lines lines match $root_file."
+            echo "OK: $vendored_file matches $root_file (ignoring comments)."
           }
 
           check_vendored ai_client.py vercel-deployment/api/query-ensemble/ai_client.py
-          check_vendored local_models.py vercel-deployment/api/query-ensemble/local_models.py
+          # local_models.py has one deliberate code difference: the deployed
+          # function's LocalTransformerProvider defaults to max_tokens=100
+          # (fits its time budget), vs 450 for the offline CLI -- see the
+          # comment above that line in either file. Normalize it away so
+          # only *unintended* drift fails the build.
+          check_vendored local_models.py vercel-deployment/api/query-ensemble/local_models.py 's/max_tokens: int = 450/max_tokens: int = 100/'
           check_vendored token_optimizer.py vercel-deployment/api/query-ensemble/token_optimizer.py
           check_vendored prompt_router.py vercel-deployment/api/query-ensemble/prompt_router.py
 
@@ -205,7 +220,14 @@ jobs:
       - name: Run npm audit
         run: |
           cd vercel-deployment
-          npm audit --audit-level=high
+          # Scoped to production dependencies: several high/moderate
+          # advisories only reach us through devDependencies (tailwindcss's
+          # build-time chokidar/braces chain, @tailwindcss/typography's
+          # postcss-selector-parser) whose only fix is a breaking major
+          # bump, and which never ship in the deployed app. --omit=dev
+          # keeps this gate meaningful (fails on real runtime-reachable
+          # vulnerabilities) instead of permanently red over build tooling.
+          npm audit --omit=dev --audit-level=high
 
       - name: Run pip-audit
         run: |

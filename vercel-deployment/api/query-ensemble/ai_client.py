@@ -1677,9 +1677,7 @@ def _generate_candidates(
                 # reaches the API response (never the raw exception -- see its
                 # docstring), which also means operators have no way to see
                 # *why* a bot failed from the response alone. Log the real
-                # exception server-side only (Vercel function logs / Sentry
-                # via ai_client's "ai_client" logger propagating to root --
-                # see main.py's logging.basicConfig), not returned to callers.
+                # exception server-side only (never returned to callers).
                 logger.error("bot %r (%s) failed: %s", bot_name, provider_name, exc, exc_info=exc)
 
             candidates.append(
