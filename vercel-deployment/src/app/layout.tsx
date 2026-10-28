@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import StagingBanner from "@/components/layout/staging-banner";
+import BetaBanner from "@/components/layout/beta-banner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,6 +45,7 @@ export default function RootLayout({
         <AuthProvider>
           <ReactQueryProvider>
             <StagingBanner />
+            <BetaBanner />
             <Header />
             <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
               {children}

@@ -185,9 +185,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-6 text-center text-sm text-slate-500">
-          <p>By continuing, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link></p>
-        </div>
       </motion.div>
     </div>
   );

@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import DashboardHeader from "@/components/layout/dashboard-header";
-import { getSupabase } from "@/lib/supabase/client";
+import { getBrowserSupabase as getSupabase } from "@/lib/supabase/browserClient";
 import { CONTACT_EMAIL } from "@/lib/contact";
 import { TIERS as SUBSCRIPTION_TIERS, formatPrice } from "@/lib/pricing";
 

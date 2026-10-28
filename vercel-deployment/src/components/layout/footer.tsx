@@ -17,9 +17,6 @@ export default function Footer() {
               <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">Contact</a>
               <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
               <Link href="/test-results" className="hover:text-white transition-colors">Test Results</Link>
-              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-              <Link href="/dpa" className="hover:text-white transition-colors">DPA</Link>
             </div>
             <p>© {new Date().getFullYear()} MultiLLM. All rights reserved.</p>
             <p>Zero-carbon · Privacy-first · Multi-language</p>

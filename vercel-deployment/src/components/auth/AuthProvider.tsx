@@ -1,9 +1,9 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { createBrowserClient } from "@supabase/ssr";
 import type { User } from "@supabase/supabase-js";
 import { isDemoMode } from "@/lib/demoMode";
+import { getBrowserSupabase } from "@/lib/supabase/browserClient";
 
 interface Profile {
   id: string;
@@ -76,31 +76,11 @@ function loadDemoUser(): (User & { profile: Profile }) | null {
   }
 }
 
-function getSupabase() {
-  if (typeof window === "undefined") {
-    // Return a mock client for SSR
-    return {
-      from: () => ({
-        select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }),
-        insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }),
-        update: () => ({ eq: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }) }),
-        delete: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
-      }),
-      auth: { getSession: () => Promise.resolve({ data: { session: null }, error: null }), onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }) },
-    } as any;
-  }
-  
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-  );
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<(User & { profile?: Profile }) | null>(null);
   const [loading, setLoading] = useState(true);
   const demoMode = isDemoMode();
-  const supabase = getSupabase();
+  const supabase = getBrowserSupabase();
 
   const fetchProfile = async (userId: string): Promise<Profile | null> => {
     const { data, error } = await supabase
