@@ -1,12 +1,12 @@
 # Test Results
 
-*Model-eval numbers below generated 2026-09-23, real run on this machine
-(CPU-only, no MPS/CUDA); test count refreshed 2026-10-10.
+*Model-eval numbers below generated 2026-10-30, real run on this machine
+(CPU-only, no MPS/CUDA); test count refreshed 2026-10-30.
 Reproduce with `pytest -q`, `python -m train.eval_models`.*
 
 ## Test suite
 
-**76/76 tests passing** (`pytest -q`) — covers `ai_client.py` core
+**98/98 tests passing** (`pytest -q`) — covers `ai_client.py` core
 scoring/redaction/key-loading/ensemble logic, `token_optimizer.py`,
 `train/prompt_refiner_data.py`, per-provider timeouts/streaming
 (`test_provider_timeouts.py`, `test_stream_timeout.py`), and prompt routing
@@ -27,9 +27,9 @@ Evaluated against all 390 labeled examples:
 
 | Dimension | MAE |
 |---|---|
-| source_support | 0.007 |
-| bias_score | 0.0071 |
-| clarity_score | 0.0051 |
+| source_support | 0.0073 |
+| bias_score | 0.0075 |
+| clarity_score | 0.0054 |
 
 MAE stays low (0.013–0.034) across every answer class (grounded, biased,
 mixed, rambling, unsupported-clear, vague) — the scorer reliably tells these
@@ -39,12 +39,12 @@ apart, which is what lets the ensemble rank real candidates correctly.
 
 | | Trained questions | Novel (held-out) questions |
 |---|---|---|
-| Avg length | 81.7 words | 68.7 words |
-| Unique-word ratio | 0.83 | 0.89 |
+| Avg length | 64.7 words | 58.0 words |
+| Unique-word ratio | 0.79 | 0.89 |
 | Uses citations `[S#]` | 100% | 100% |
-| States tradeoffs | 100% | 100% |
+| States tradeoffs | 67% | 100% |
 | Flags uncertainty | 100% | 100% |
-| Generation time | ~30s/answer | ~30s/answer (CPU) |
+| Generation time | ~20s/answer | ~25s/answer (CPU) |
 
 **Honest read**: the model reliably learned the *conventions* of the
 ensemble's answer style (cite sources, name a tradeoff, flag uncertainty
@@ -69,11 +69,16 @@ training epochs — a real scope decision, not a quick fix.
 
 One full query through retrieval → generation → scoring:
 
-- Sources retrieved: 3
-- Generated answer: 62 words in ~28.8s (CPU)
-- Heuristic scores: support 1.0, bias 0.78, clarity 0.95
-- Learned (scorer) scores: support 0.80, bias 0.79, clarity 0.84
+- Sources retrieved: 2
+- Generated answer: 71 words in ~26.5s (CPU)
+- Heuristic scores: support 0.25, bias 0.78, clarity 0.95
+- Learned (scorer) scores: support 0.82, bias 0.81, clarity 0.85
 
-Heuristic and learned scores broadly agree, which is the intended check —
-the trained scorer isn't wildly out of step with the hand-written heuristic
-it's blended with.
+Bias and clarity agree closely between the two scoring paths. Support
+diverges more on this single live run than the 390-example aggregate MAE
+above would suggest -- the heuristic penalizes this particular generation's
+weak literal overlap with its sources harder than the learned scorer does.
+Re-ran this twice during this session and saw the same pattern both times
+(support 0.25-0.33 heuristic vs ~0.8 learned), so it's a real, repeatable
+characteristic of single live samples, not a fluke -- the aggregate MAE is
+the number to trust, not any one example.

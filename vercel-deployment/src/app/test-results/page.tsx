@@ -6,16 +6,16 @@ export const metadata = {
 };
 
 const SCORER_MAE = [
-  { label: "Source support", value: "0.0070" },
-  { label: "Bias score", value: "0.0071" },
-  { label: "Clarity score", value: "0.0051" },
+  { label: "Source support", value: "0.0073" },
+  { label: "Bias score", value: "0.0075" },
+  { label: "Clarity score", value: "0.0054" },
 ];
 
 const GENERATOR_STATS = [
-  { label: "Avg length (trained qs)", value: "81.7 words" },
-  { label: "Avg length (novel qs)", value: "68.7 words" },
+  { label: "Avg length (trained qs)", value: "64.7 words" },
+  { label: "Avg length (novel qs)", value: "58.0 words" },
   { label: "Uses citations [S#]", value: "100%" },
-  { label: "States a tradeoff", value: "100%" },
+  { label: "Tradeoff (trained / novel)", value: "67% / 100%" },
   { label: "Flags uncertainty", value: "100%" },
 ];
 
@@ -37,11 +37,11 @@ export default function TestResultsPage() {
 
       <div className="grid sm:grid-cols-3 gap-4 mb-12">
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 text-center">
-          <div className="text-3xl font-bold text-emerald-600">91/91</div>
+          <div className="text-3xl font-bold text-emerald-600">98/98</div>
           <div className="text-sm text-slate-500 mt-1">Unit tests passing</div>
         </div>
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 text-center">
-          <div className="text-3xl font-bold text-purple-600">0.006</div>
+          <div className="text-3xl font-bold text-purple-600">0.007</div>
           <div className="text-sm text-slate-500 mt-1">Scorer avg. MAE (0–1 scale)</div>
         </div>
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-6 text-center">
@@ -111,14 +111,16 @@ export default function TestResultsPage() {
         <h2 className="text-xl font-bold text-slate-900 mb-4">End-to-end pipeline</h2>
         <p className="text-slate-600 mb-4">One full query through retrieval → generation → scoring, measured live:</p>
         <ul className="text-sm text-slate-600 space-y-1.5">
-          <li>Sources retrieved: <span className="font-semibold text-slate-900">3</span></li>
-          <li>Generated answer: <span className="font-semibold text-slate-900">62 words in ~28.8s</span> (CPU)</li>
-          <li>Heuristic scores: support 1.0, bias 0.78, clarity 0.95</li>
-          <li>Learned (scorer) scores: support 0.80, bias 0.79, clarity 0.84</li>
+          <li>Sources retrieved: <span className="font-semibold text-slate-900">2</span></li>
+          <li>Generated answer: <span className="font-semibold text-slate-900">71 words in ~26.5s</span> (CPU)</li>
+          <li>Heuristic scores: support 0.25, bias 0.78, clarity 0.95</li>
+          <li>Learned (scorer) scores: support 0.82, bias 0.81, clarity 0.85</li>
         </ul>
         <p className="text-sm text-slate-500 mt-4">
-          Heuristic and learned scores broadly agree — the intended check that the trained scorer isn&apos;t wildly
-          out of step with the hand-written heuristic it&apos;s blended with.
+          Bias and clarity agree closely between the two scoring paths. Support diverges more on this single live
+          run than the 390-example aggregate MAE above would suggest — the heuristic penalizes this particular
+          generation&apos;s weak literal overlap with its sources harder than the learned scorer does. One sample
+          isn&apos;t the real signal; the aggregate MAE is.
         </p>
       </section>
     </div>
