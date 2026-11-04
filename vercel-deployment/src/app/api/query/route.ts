@@ -376,6 +376,15 @@ export async function POST(req: NextRequest) {
       // same info already logged server-side (ai_client.py's _route_for_query),
       // surfaced here too so it's visible without digging through logs.
       routing: pythonResult.routing || null,
+      // ai_client.py's _generate_candidates already computes this sanitized
+      // (no keys, no raw exception text -- see classify_failure) per-bot
+      // failure list specifically "for surfacing to the API response" per
+      // its own docstring, but nothing between there and here ever read it,
+      // so every partial ensemble failure was invisible to callers and to
+      // us. Surfacing it closes that gap -- a caller (or we, watching
+      // production) can now tell a degraded-but-answered query from a fully
+      // healthy one instead of only ever seeing whichever providers survived.
+      provider_failures: pythonResult.provider_failures || [],
     },
     { headers: { "x-request-id": requestId } }
   );
