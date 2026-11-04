@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,15 @@ export default function LoginPage() {
   const [name, setName] = useState("");
   const router = useRouter();
   const { login, register, demoMode } = useAuth();
+
+  // /auth/confirm redirects here with this param when a magic-link/recovery
+  // token_hash fails verifyOtp (expired, already used, or malformed).
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("error") === "invalid-link") {
+      toast.error("That link is invalid or has expired. Please try again.");
+      window.history.replaceState(null, "", "/login");
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

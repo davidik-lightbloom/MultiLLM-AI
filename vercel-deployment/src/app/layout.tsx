@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/components/providers/react-query-provider";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import AuthHashHandler from "@/components/auth/AuthHashHandler";
 import { Toaster } from "react-hot-toast";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -43,6 +44,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
+          <AuthHashHandler />
           <ReactQueryProvider>
             <StagingBanner />
             <BetaBanner />
