@@ -14,6 +14,8 @@ venv/
 chat_history.json
 thinking_temp.json
 ai_thinking_log.json
+# Pilot/agency outreach data (customer emails, generated credentials) -- never commit
+pilot_accounts.xlsx
 # Seed docs are tracked; large/private user files can be added here later
 !knowledge_sources/*.md
 
