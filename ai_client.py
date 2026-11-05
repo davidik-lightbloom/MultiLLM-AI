@@ -74,7 +74,15 @@ def load_env_file(path: Path | None = None) -> None:
 load_env_file()
 
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
-DEFAULT_OPENROUTER_MODEL = "openai/gpt-4o-mini"
+# A paid model here silently dies the moment the OpenRouter account's credit
+# balance hits $0 (confirmed live 2026-11-04: every call failed, classified
+# as a generic "error" by classify_failure since OpenRouter's insufficient-
+# balance response isn't HTTP 429). A `:free`-suffixed model draws from
+# OpenRouter's separate free-tier rate limit instead of account balance, so
+# this slot keeps working with zero credits funded. Override per-deployment
+# with OPENAI_MODEL (see build_provider_stack) once/if the account carries a
+# real balance and a paid model is wanted back.
+DEFAULT_OPENROUTER_MODEL = "nvidia/nemotron-3.5-super-vl:free"
 DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
 DEFAULT_MISTRAL_MODEL = "mistral-small-latest"
 DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b"
