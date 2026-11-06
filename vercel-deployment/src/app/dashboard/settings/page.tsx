@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Save, User, Shield, Bell, Check, X, AlertTriangle } from "lucide-react";
+import { Save, User, Shield, Bell, Check, X, AlertTriangle, Zap } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -23,6 +23,35 @@ export default function SettingsPage() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [saveStatus, setSaveStatus] = useState("idle");
+  // Phase 1 of the adaptive multi-agent hierarchy roadmap: saves immediately
+  // on change (like the homepage's local_only toggle), not gated behind this
+  // page's isEditing/Save flow above, which only covers the Profile
+  // section's display name. Skills are stored-only for now -- a future
+  // coordinator is the first thing that actually reads enabled_skills.
+  const [aiMode, setAiMode] = useState<"fast" | "deep">(user?.profile?.default_mode === "deep" ? "deep" : "fast");
+  const [enabledSkills, setEnabledSkills] = useState<string[]>(user?.profile?.enabled_skills || ["general"]);
+
+  const handleModeToggle = async (wantsDeep: boolean) => {
+    const next = wantsDeep ? "deep" : "fast";
+    setAiMode(next);
+    try {
+      await updateProfile({ default_mode: next });
+    } catch {
+      toast.error("Couldn't save mode preference");
+    }
+  };
+
+  const handleSkillToggle = async (skill: string) => {
+    const next = enabledSkills.includes(skill)
+      ? enabledSkills.filter((s) => s !== skill)
+      : [...enabledSkills, skill];
+    setEnabledSkills(next);
+    try {
+      await updateProfile({ enabled_skills: next });
+    } catch {
+      toast.error("Couldn't save skills preference");
+    }
+  };
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
@@ -175,6 +204,66 @@ export default function SettingsPage() {
                   <p className="text-xs text-slate-400 mt-1">Changing your account email isn&apos;t supported yet.</p>
                 </div>
               </form>
+            </motion.div>
+
+            {/* AI Behavior Section -- Phase 1 of the adaptive multi-agent
+                hierarchy roadmap. Mode and skills save immediately on
+                change (like the homepage's local_only toggle), not gated
+                behind this page's own isEditing/Save flow. Skills are
+                stored-only for now -- a future coordinator is the first
+                thing that actually reads enabled_skills. */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8"
+            >
+              <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-purple-600" />
+                AI Behavior
+              </h2>
+
+              <div className="flex items-center justify-between py-3 border-b border-slate-100">
+                <div>
+                  <div className="font-medium text-slate-900">Deep Mode</div>
+                  <div className="text-sm text-slate-500">
+                    Runs a larger ensemble and (on Pro/Enterprise) an extra confidence check, by default on every query.
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleModeToggle(aiMode !== "deep")}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
+                    aiMode === "deep" ? "bg-purple-600" : "bg-slate-200"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${aiMode === "deep" ? "translate-x-6" : "translate-x-1"}`}
+                  />
+                </button>
+              </div>
+
+              <div className="mt-4">
+                <div className="font-medium text-slate-900 mb-2">Skills</div>
+                <p className="text-xs text-slate-400 mb-3">
+                  Not active yet -- stored for an upcoming feature that lets you focus the ensemble on specific skills.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["general", "coding", "research", "writing"].map((skill) => (
+                    <button
+                      key={skill}
+                      type="button"
+                      onClick={() => handleSkillToggle(skill)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                        enabledSkills.includes(skill)
+                          ? "bg-purple-100 text-purple-700 border-purple-200"
+                          : "bg-slate-50 text-slate-600 border-slate-200"
+                      }`}
+                    >
+                      {skill}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </motion.div>
 
             {/* Security Section */}

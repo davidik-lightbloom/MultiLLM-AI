@@ -131,6 +131,7 @@ export async function POST(req: NextRequest) {
   let requestedDeepReview = false;
   let requestedStream = false;
   let requestedLocalOnly = false;
+  let requestedMode: "fast" | "deep" | null = null;
 
   // Programmatic access via a generated API key takes precedence over the
   // dashboard's own logged-in session. Neither is ever taken from the
@@ -146,6 +147,7 @@ export async function POST(req: NextRequest) {
     requestedDeepReview = body?.deep_review === true;
     requestedStream = body?.stream === true;
     requestedLocalOnly = body?.local_only === true;
+    requestedMode = body?.mode === "deep" ? "deep" : body?.mode === "fast" ? "fast" : null;
     options = {
       bot_count: body?.bot_count,
       top_k: body?.top_k,
@@ -181,7 +183,13 @@ export async function POST(req: NextRequest) {
   // real per-user identity to key on.
   const demoMode = isDemoMode();
   const tier: Tier = (apiKeyAuth?.tier as Tier) || (profile?.plan as Tier) || (demoMode ? "pro" : "free");
-  const deepReviewAllowed = requestedDeepReview && (demoMode || DEEP_REVIEW_PLANS.has(profile?.plan || "free"));
+  // Phase 1 of the adaptive-hierarchy roadmap: Fast vs Deep mode. Same
+  // per-request-override-then-profile-fallback pattern as local_only below.
+  // Computed before deepReviewAllowed since mode=="deep" is also a trigger
+  // for Deep Review (still gated by DEEP_REVIEW_PLANS either way).
+  const mode: "fast" | "deep" = requestedMode || (profile?.default_mode === "deep" ? "deep" : "fast");
+  const wantsDeepReview = requestedDeepReview || mode === "deep";
+  const deepReviewAllowed = wantsDeepReview && (demoMode || DEEP_REVIEW_PLANS.has(profile?.plan || "free"));
   // Feature 4: local-only mode. A per-request flag takes precedence (lets an
   // anonymous visitor, who has no profile row, still use it from
   // localStorage), falling back to the logged-in user's saved preference so
@@ -294,6 +302,12 @@ export async function POST(req: NextRequest) {
   if (localOnly) {
     options = { ...options, local_only: true };
   }
+  // mode itself is forwarded unconditionally, unlike deep_review above --
+  // bot_count is already a fully client-controlled, ungated field today, so
+  // deep mode's bot_count bump riding along with it is no new exposure.
+  // Deep Review's extra paid-tier call stays gated by deepReviewAllowed
+  // above regardless of what mode is set to.
+  options = { ...options, mode };
 
   if (requestedStream) {
     return handleStreamingQuery({ prompt, options, requestId, userId, projectId, apiKeyAuth });

@@ -17,6 +17,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from ai_client import (
+    Candidate,
+    GenerationConfig,
     RoundRobinKeys,
     SourceChunk,
     SourceIndex,
@@ -30,6 +32,7 @@ from ai_client import (
     load_keys_from_env,
     redact_sensitive,
     source_support_score,
+    synthesize_answer,
     tokenize,
 )
 
@@ -327,6 +330,58 @@ def test_build_ensemble_answer_deep_review_returns_confidence_score():
 
     assert confidence_score is not None
     assert 0.0 <= confidence_score <= 1.0
+
+
+def _make_candidate(provider_index: int = 0, text: str | None = None, score: float = 0.9) -> Candidate:
+    return Candidate(
+        bot_name="Fake Bot",
+        provider_name="Fake-A",
+        provider_index=provider_index,
+        text=text or "This is a well-supported answer [S1] that stays balanced overall.",
+        source_score=score,
+        bias_score=score,
+        clarity_score=score,
+        total_score=score,
+    )
+
+
+def test_synthesize_answer_non_streaming_yields_single_synthesis_done_event():
+    """Phase 1 of the adaptive multi-agent hierarchy roadmap: extracted from
+    build_ensemble_answer's former inline synthesis block -- this is the
+    seam a future coordinator/reviewer step attaches to. A non-streaming
+    caller drains the generator and keeps only the final event."""
+    providers = [FakeProvider("Fake-A")]
+    candidates = [_make_candidate(provider_index=0)]
+    sources = [_make_source("S1", "background information relevant to the well-supported answer")]
+
+    events = list(
+        synthesize_answer(
+            candidates, providers, "What does the source say?", False, GenerationConfig(), sources, stream=False
+        )
+    )
+
+    assert len(events) == 1
+    assert events[0]["event"] == "synthesis_done"
+    assert isinstance(events[0]["answer"], str) and events[0]["answer"].strip()
+    assert events[0]["synthesis_provider"] is providers[0]
+
+
+def test_synthesize_answer_streaming_falls_back_to_blocking_and_yields_token_then_done():
+    """FakeProvider has no chat_stream, exercising the same
+    stream-unavailable-falls-back-to-blocking-call path
+    build_ensemble_answer_stream relied on before this was extracted."""
+    providers = [FakeProvider("Fake-A")]
+    candidates = [_make_candidate(provider_index=0)]
+    sources = [_make_source("S1", "background information relevant to the well-supported answer")]
+
+    events = list(
+        synthesize_answer(
+            candidates, providers, "What does the source say?", False, GenerationConfig(), sources, stream=True
+        )
+    )
+
+    assert [e["event"] for e in events] == ["token", "synthesis_done"]
+    assert events[0]["text"] == events[1]["answer"]
 
 
 def test_build_ensemble_answer_raises_when_no_providers_configured():

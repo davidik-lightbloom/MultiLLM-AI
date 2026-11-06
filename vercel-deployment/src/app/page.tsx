@@ -72,6 +72,14 @@ export default function HomePage() {
   // TinyGPT models, zero remote calls. Initialized from the user's saved
   // preference (or localStorage for an anonymous visitor) below.
   const [localOnly, setLocalOnly] = useState(false);
+  // Phase 1 of the adaptive-hierarchy roadmap: Fast vs Deep mode. "Deep"
+  // today just means a bigger ensemble (and, on a paid plan, Deep Review
+  // riding along automatically) -- see route.ts's `mode` handling. No
+  // localStorage fallback for anonymous visitors (unlike local_only):
+  // without a saved plan, "deep" can't unlock anything beyond the ungated
+  // bot_count bump, so persisting an anonymous choice isn't worth the
+  // complexity.
+  const [mode, setMode] = useState<"fast" | "deep">("fast");
   // Feature 3 (cost estimator): which provider families are actually
   // available to this caller, fetched once so the estimate can narrow to
   // real options instead of assuming every provider is configured.
@@ -123,6 +131,7 @@ export default function HomePage() {
   useEffect(() => {
     if (user) {
       setLocalOnly(Boolean(user.profile?.local_only_mode));
+      setMode(user.profile?.default_mode === "deep" ? "deep" : "fast");
       return;
     }
     if (typeof window !== "undefined") {
@@ -140,6 +149,17 @@ export default function HomePage() {
       }
     } else if (typeof window !== "undefined") {
       window.localStorage.setItem(LOCAL_ONLY_STORAGE_KEY, checked ? "1" : "0");
+    }
+  };
+
+  const handleModeChange = async (next: "fast" | "deep") => {
+    setMode(next);
+    if (user) {
+      try {
+        await updateProfile({ default_mode: next });
+      } catch {
+        toast.error("Couldn't save mode preference");
+      }
     }
   };
 
@@ -161,6 +181,7 @@ export default function HomePage() {
           project_id: selectedProjectId || undefined,
           deep_review: deepReviewAvailable && deepReview,
           local_only: localOnly,
+          mode,
           stream: true,
         }),
       });
@@ -328,6 +349,31 @@ export default function HomePage() {
               Experimental: a tiny from-scratch model answers locally, so phrasing may be rough. Shown to demonstrate zero-cost, fully private queries.
             </p>
           )}
+
+          {/* Phase 1 of the adaptive-hierarchy roadmap: a Fast/Deep mode
+              switch, distinct from the per-query "Deep Review" checkbox
+              below -- Deep mode broadens the ensemble itself (and, on a
+              paid plan, brings Deep Review along automatically); Deep
+              Review alone just adds one extra confidence-scoring call on
+              top of whichever mode is picked. */}
+          <div className="mt-3 flex items-center justify-center gap-1 text-sm">
+            <span className="text-slate-500 mr-1">Mode:</span>
+            {(["fast", "deep"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => handleModeChange(option)}
+                disabled={isLoading}
+                className={`px-3 py-1 rounded-full capitalize transition-colors ${
+                  mode === option
+                    ? "bg-purple-600 text-white"
+                    : "bg-white border border-slate-200 text-slate-600 hover:border-purple-300"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
 
           {projects.length > 0 && (
             <div className="mt-3 flex items-center justify-center gap-2">

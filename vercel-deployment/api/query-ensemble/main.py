@@ -206,6 +206,14 @@ class QueryRequest(BaseModel):
     deep_review: Optional[bool] = False
     # Feature 4: force the local TinyGPT provider only, zero remote calls.
     local_only: Optional[bool] = False
+    # Phase 1 of the adaptive-hierarchy roadmap: Fast vs Deep mode. "deep"
+    # today just raises bot_count and forces deep_review using existing
+    # knobs (no coordinator yet) -- a later phase swaps in the real
+    # hierarchy pipeline behind this same flag without changing the
+    # request/response contract. Plain str (not Literal) with manual
+    # normalization at the call site so a stray value falls back to "fast"
+    # instead of 422ing the whole request.
+    mode: Optional[str] = "fast"
 
 
 class CandidateResponse(BaseModel):
@@ -271,6 +279,13 @@ async def query_ensemble(request: QueryRequest, http_request: Request):
 
     bot_count = request.bot_count or BOT_COUNT
     bot_count = max(2, min(MAX_PARALLEL_BOTS, bot_count))
+    mode = request.mode if request.mode in ("fast", "deep") else "fast"
+    # Deep mode's only lever today is "more ensemble diversity" -- raise
+    # toward the parallel-bot ceiling, but only when the caller didn't pin an
+    # explicit bot_count themselves (an explicit value is a deliberate choice
+    # that deep mode shouldn't silently override).
+    if mode == "deep" and request.bot_count is None:
+        bot_count = MAX_PARALLEL_BOTS
     # Local-only mode's only provider is the CPU-bound TinyGPT model -- every
     # "bot" is a separate from-scratch generation on the same model, so more
     # bots means more CPU contention (not more real diversity of opinion)
@@ -280,6 +295,12 @@ async def query_ensemble(request: QueryRequest, http_request: Request):
         bot_count = min(bot_count, 2)
 
     privacy_redaction = request.privacy_redaction if request.privacy_redaction is not None else PRIVACY_REDACTION
+    # Deep Review itself stays a paid-plan perk gated entirely on the Next.js
+    # side (DEEP_REVIEW_PLANS) -- mode=="deep" alone must never grant it here,
+    # or a free-tier caller could get it for free just by setting mode. This
+    # force-true is defense-in-depth for any future direct caller of this
+    # service that bypasses that gating, not the primary enforcement point.
+    deep_review_effective = bool(request.deep_review) or mode == "deep"
 
     try:
         start = time.perf_counter()
@@ -293,7 +314,7 @@ async def query_ensemble(request: QueryRequest, http_request: Request):
             sources=sources,
             bot_count=bot_count,
             privacy_redaction=privacy_redaction,
-            deep_review=bool(request.deep_review),
+            deep_review=deep_review_effective,
             failures_out=provider_failures,
         )
         latency_ms = (time.perf_counter() - start) * 1000
@@ -349,7 +370,7 @@ async def query_ensemble(request: QueryRequest, http_request: Request):
             token_savings=token_savings,
             confidence_score=confidence_score,
             request_id=request_id,
-            routing={"category": classification.category, "confidence": classification.confidence},
+            routing={"category": classification.category, "confidence": classification.confidence, "mode": mode},
             provider_failures=provider_failures,
         )
     except NoRemoteProviderAnsweredError as e:
@@ -386,10 +407,14 @@ async def query_ensemble_stream(request: QueryRequest, http_request: Request):
 
     bot_count = request.bot_count or BOT_COUNT
     bot_count = max(2, min(MAX_PARALLEL_BOTS, bot_count))
-    # See the matching comment in query_ensemble() above.
+    mode = request.mode if request.mode in ("fast", "deep") else "fast"
+    # See the matching comments in query_ensemble() above.
+    if mode == "deep" and request.bot_count is None:
+        bot_count = MAX_PARALLEL_BOTS
     if request.local_only:
         bot_count = min(bot_count, 2)
     privacy_redaction = request.privacy_redaction if request.privacy_redaction is not None else PRIVACY_REDACTION
+    deep_review_effective = bool(request.deep_review) or mode == "deep"
 
     async def event_source():
         start = time.perf_counter()
@@ -404,7 +429,7 @@ async def query_ensemble_stream(request: QueryRequest, http_request: Request):
                 sources=sources,
                 bot_count=bot_count,
                 privacy_redaction=privacy_redaction,
-                deep_review=bool(request.deep_review),
+                deep_review=deep_review_effective,
             ):
                 if event["event"] != "done":
                     yield f"data: {json.dumps(event)}\n\n"
@@ -446,7 +471,7 @@ async def query_ensemble_stream(request: QueryRequest, http_request: Request):
                     "refined_prompt": refined_prompt if refined_prompt != request.prompt else None,
                     "token_savings": token_savings,
                     "confidence_score": event.get("confidence_score"),
-                    "routing": event.get("routing"),
+                    "routing": {**(event.get("routing") or {}), "mode": mode},
                     "provider_failures": event.get("provider_failures", []),
                     "request_id": request_id,
                 }

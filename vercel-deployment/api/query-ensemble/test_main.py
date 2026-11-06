@@ -124,3 +124,119 @@ def test_query_endpoint_does_not_cap_bot_count_for_remote_providers(monkeypatch)
 
     assert resp.status_code == 200
     assert captured["bot_count"] == 5
+
+
+def test_query_endpoint_raises_bot_count_for_deep_mode(monkeypatch):
+    """Phase 1 of the adaptive-hierarchy roadmap: deep mode's only lever
+    today is a bigger ensemble, applied only when the caller didn't pin an
+    explicit bot_count (see the matching comment in main.py)."""
+    captured = {}
+
+    def fake_build_ensemble_answer(**kwargs):
+        captured["bot_count"] = kwargs["bot_count"]
+        return "answer", [], {}, None
+
+    monkeypatch.setattr(main, "build_ensemble_answer", fake_build_ensemble_answer)
+    monkeypatch.setattr(
+        main,
+        "providers",
+        [type("FakeProvider", (), {"name": "Fake", "model": "fake-model", "size": lambda self: 1})()],
+    )
+    client = TestClient(main.app)
+
+    resp = client.post(
+        "/api/query",
+        json={"prompt": "hello", "mode": "deep"},
+        headers=AUTH_HEADERS,
+    )
+
+    assert resp.status_code == 200
+    assert captured["bot_count"] == main.MAX_PARALLEL_BOTS
+
+
+def test_query_endpoint_deep_mode_does_not_override_explicit_bot_count(monkeypatch):
+    captured = {}
+
+    def fake_build_ensemble_answer(**kwargs):
+        captured["bot_count"] = kwargs["bot_count"]
+        return "answer", [], {}, None
+
+    monkeypatch.setattr(main, "build_ensemble_answer", fake_build_ensemble_answer)
+    monkeypatch.setattr(
+        main,
+        "providers",
+        [type("FakeProvider", (), {"name": "Fake", "model": "fake-model", "size": lambda self: 1})()],
+    )
+    client = TestClient(main.app)
+
+    resp = client.post(
+        "/api/query",
+        json={"prompt": "hello", "mode": "deep", "bot_count": 3},
+        headers=AUTH_HEADERS,
+    )
+
+    assert resp.status_code == 200
+    # An explicit bot_count is a deliberate choice -- deep mode must not
+    # silently override it.
+    assert captured["bot_count"] == 3
+
+
+def test_query_endpoint_fast_mode_is_default_and_unaffected(monkeypatch):
+    """No "mode" field at all must behave exactly as before this field
+    existed: default bot_count, no forced deep_review, routing reports
+    "fast"."""
+    captured = {}
+
+    def fake_build_ensemble_answer(**kwargs):
+        captured["bot_count"] = kwargs["bot_count"]
+        captured["deep_review"] = kwargs["deep_review"]
+        return "answer", [], {}, None
+
+    monkeypatch.setattr(main, "build_ensemble_answer", fake_build_ensemble_answer)
+    monkeypatch.setattr(
+        main,
+        "providers",
+        [type("FakeProvider", (), {"name": "Fake", "model": "fake-model", "size": lambda self: 1})()],
+    )
+    client = TestClient(main.app)
+
+    resp = client.post(
+        "/api/query",
+        json={"prompt": "hello", "bot_count": 5},
+        headers=AUTH_HEADERS,
+    )
+
+    assert resp.status_code == 200
+    assert captured["bot_count"] == 5
+    assert captured["deep_review"] is False
+    assert resp.json()["routing"]["mode"] == "fast"
+
+
+def test_query_endpoint_deep_mode_forces_deep_review_as_defense_in_depth(monkeypatch):
+    """Deep Review itself is tier-gated entirely on the Next.js side
+    (DEEP_REVIEW_PLANS) before this field ever reaches this service -- this
+    force-true only guards a future direct caller that bypasses that gate,
+    it is not where the paid/free boundary is actually enforced."""
+    captured = {}
+
+    def fake_build_ensemble_answer(**kwargs):
+        captured["deep_review"] = kwargs["deep_review"]
+        return "answer", [], {}, None
+
+    monkeypatch.setattr(main, "build_ensemble_answer", fake_build_ensemble_answer)
+    monkeypatch.setattr(
+        main,
+        "providers",
+        [type("FakeProvider", (), {"name": "Fake", "model": "fake-model", "size": lambda self: 1})()],
+    )
+    client = TestClient(main.app)
+
+    resp = client.post(
+        "/api/query",
+        json={"prompt": "hello", "mode": "deep"},
+        headers=AUTH_HEADERS,
+    )
+
+    assert resp.status_code == 200
+    assert captured["deep_review"] is True
+    assert resp.json()["routing"]["mode"] == "deep"

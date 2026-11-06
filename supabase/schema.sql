@@ -102,6 +102,15 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS credits_period_start TIMEST
 -- no profile row to attach it to.
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS local_only_mode BOOLEAN NOT NULL DEFAULT FALSE;
 
+-- Phase 1 of the adaptive multi-agent hierarchy roadmap: a per-user default
+-- for Fast vs Deep mode (overridable per-request, same pattern as
+-- local_only_mode) and a stored list of "skills" the user has opted into.
+-- enabled_skills isn't read by anything yet -- Phase 2's coordinator is the
+-- first real consumer -- so its default must be inert.
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS default_mode TEXT NOT NULL DEFAULT 'fast'
+  CHECK (default_mode IN ('fast', 'deep'));
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS enabled_skills JSONB NOT NULL DEFAULT '["general"]'::jsonb;
+
 -- Subscriptions (billing is a manual, email-based flow -- see
 -- dashboard/billing/page.tsx -- not Stripe; the stripe_customer_id /
 -- stripe_subscription_id columns + idx_subscriptions_stripe_customer index

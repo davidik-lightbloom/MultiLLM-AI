@@ -14,6 +14,8 @@ export interface Database {
           plan_expires_at: string | null;
           is_active: boolean;
           local_only_mode: boolean;
+          default_mode: 'fast' | 'deep';
+          enabled_skills: Json;
           created_at: string;
           updated_at: string;
         };
@@ -27,6 +29,8 @@ export interface Database {
           plan_expires_at?: string | null;
           is_active?: boolean;
           local_only_mode?: boolean;
+          default_mode?: 'fast' | 'deep';
+          enabled_skills?: Json;
           created_at?: string;
           updated_at?: string;
         };
@@ -40,6 +44,8 @@ export interface Database {
           plan_expires_at?: string | null;
           is_active?: boolean;
           local_only_mode?: boolean;
+          default_mode?: 'fast' | 'deep';
+          enabled_skills?: Json;
           created_at?: string;
           updated_at?: string;
         };

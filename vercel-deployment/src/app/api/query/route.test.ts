@@ -60,6 +60,9 @@ const BASE_PROFILE = {
   credits_period_start: "2026-01-01T00:00:00Z",
   plan_expires_at: null as string | null,
   is_active: true,
+  local_only_mode: false,
+  default_mode: "fast" as const,
+  enabled_skills: ["general"],
   created_at: "2026-01-01T00:00:00Z",
   updated_at: "2026-01-01T00:00:00Z",
 };
@@ -353,6 +356,68 @@ describe("POST /api/query", () => {
 
       expect(res.status).toBe(200);
       expect(mocks.getTodayProviderSpendUsd).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("mode (Phase 1)", () => {
+    function jsonResponse(body: Record<string, unknown>) {
+      return { ok: true, json: async () => body };
+    }
+
+    it("forwards mode='deep' to the Python ensemble when requested per-request", async () => {
+      const fetchSpy = vi.fn().mockResolvedValue(
+        jsonResponse({ answer: "Deep answer.", candidates: [], sources: [], metrics: {} })
+      );
+      vi.stubGlobal("fetch", fetchSpy);
+
+      const res = await POST(postRequest({ prompt: "hello", mode: "deep" }));
+
+      expect(res.status).toBe(200);
+      const sentBody = JSON.parse(fetchSpy.mock.calls[0][1].body);
+      expect(sentBody.mode).toBe("deep");
+    });
+
+    it("forwards mode='deep' when it's the user's saved default_mode, even with no per-request flag", async () => {
+      mocks.getProfile.mockResolvedValue({ ...BASE_PROFILE, default_mode: "deep" });
+      const fetchSpy = vi.fn().mockResolvedValue(
+        jsonResponse({ answer: "Deep answer.", candidates: [], sources: [], metrics: {} })
+      );
+      vi.stubGlobal("fetch", fetchSpy);
+
+      const res = await POST(postRequest({ prompt: "hello" }));
+
+      expect(res.status).toBe(200);
+      const sentBody = JSON.parse(fetchSpy.mock.calls[0][1].body);
+      expect(sentBody.mode).toBe("deep");
+    });
+
+    it("passes mode through regardless of plan, but only unlocks Deep Review for a paid plan", async () => {
+      // Free plan: mode forwarded, but deep_review stays gated off.
+      const freeFetchSpy = vi.fn().mockResolvedValue(
+        jsonResponse({ answer: "Deep answer.", candidates: [], sources: [], metrics: {} })
+      );
+      vi.stubGlobal("fetch", freeFetchSpy);
+
+      const freeRes = await POST(postRequest({ prompt: "hello", mode: "deep" }));
+
+      expect(freeRes.status).toBe(200);
+      const freeBody = JSON.parse(freeFetchSpy.mock.calls[0][1].body);
+      expect(freeBody.mode).toBe("deep");
+      expect(freeBody.deep_review).toBeFalsy();
+
+      // Pro plan: same mode='deep' request now also gets Deep Review.
+      mocks.getProfile.mockResolvedValue({ ...BASE_PROFILE, plan: "pro" });
+      const proFetchSpy = vi.fn().mockResolvedValue(
+        jsonResponse({ answer: "Deep answer.", candidates: [], sources: [], metrics: {} })
+      );
+      vi.stubGlobal("fetch", proFetchSpy);
+
+      const proRes = await POST(postRequest({ prompt: "hello", mode: "deep" }));
+
+      expect(proRes.status).toBe(200);
+      const proBody = JSON.parse(proFetchSpy.mock.calls[0][1].body);
+      expect(proBody.mode).toBe("deep");
+      expect(proBody.deep_review).toBe(true);
     });
   });
 });

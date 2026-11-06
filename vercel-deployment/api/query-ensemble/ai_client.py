@@ -1741,6 +1741,131 @@ def _route_for_query(
     return decision
 
 
+def synthesize_answer(
+    successful: Sequence[Candidate],
+    routed_providers: Sequence[ChatProvider],
+    user_input: str,
+    privacy_redaction: bool,
+    gen_p: "GenerationConfig",
+    sources: Sequence[SourceChunk],
+    stream: bool = False,
+):
+    """Shared by build_ensemble_answer and build_ensemble_answer_stream: pick
+    the top 3 candidates, choose a synthesis provider, build the synthesis
+    prompt, and produce the final merged answer -- streamed token-by-token
+    when stream=True (falling back to a blocking call if the provider can't
+    stream or streaming fails before any output), or as a single blocking
+    call otherwise. Centralizing this (mirroring why _generate_candidates is
+    already shared -- see its own docstring) means the two pipelines can't
+    silently diverge on synthesis behavior, and gives a future
+    coordinator/reviewer step a single seam to attach to.
+
+    Always ends by yielding {"event": "synthesis_done", "answer": str,
+    "synthesis_provider": ChatProvider}; a non-streaming caller should drain
+    this generator and keep only that last event. When stream=True, also
+    yields {"event": "token", "text": ...} and, on redaction, {"event":
+    "redacted", "text": ...} -- identical to what build_ensemble_answer_stream
+    yielded inline before this was extracted.
+    """
+    top_candidates = successful[:3]
+    synthesis_provider = routed_providers[top_candidates[0].provider_index]
+    for candidate in top_candidates:
+        provider = routed_providers[candidate.provider_index]
+        if provider.name != "Local TinyGPT (from scratch)":
+            synthesis_provider = provider
+            break
+
+    citation_rule = (
+        "- Keep citations like [S1] when factual claims are retained.\n"
+        if sources
+        else "- No local sources were used for this answer -- do not invent or keep any [S#] citation.\n"
+    )
+    synthesis_prompt = (
+        "You are the final judge. Merge the best parts of candidate answers into one superior response.\n"
+        "Rules:\n"
+        "- Keep only claims with source support or mark as uncertain.\n"
+        "- Preserve balanced framing to reduce bias.\n"
+        f"{citation_rule}"
+        "- If candidates conflict, explain the conflict briefly.\n\n"
+        f"User question:\n{redact_sensitive(user_input) if privacy_redaction else user_input}\n\n"
+        "Candidate answers:\n"
+    )
+    for idx, item in enumerate(top_candidates, start=1):
+        synthesis_prompt += (
+            f"Candidate {idx} ({item.bot_name}, provider={item.provider_name}, score={item.total_score:.2f}):\n"
+            f"{item.text}\n\n"
+        )
+
+    synthesis_messages = [
+        {"role": "system", "content": "Produce one final, practical, unbiased answer."},
+        {"role": "user", "content": synthesis_prompt},
+    ]
+    synthesis_gen = GenerationConfig(temperature=0.1, max_tokens=gen_p.max_tokens)
+
+    final_answer = ""
+    if stream:
+        stream_fn = getattr(synthesis_provider, "chat_stream", None)
+        if stream_fn is not None:
+            try:
+                raw_stream = stream_fn(messages=synthesis_messages, temperature=0.1, gen_p=synthesis_gen)
+                for chunk in _iter_stream_with_timeout(raw_stream, JUDGE_TIMEOUT_SECONDS):
+                    if not chunk:
+                        continue
+                    final_answer += chunk
+                    yield {"event": "token", "text": chunk}
+            except Exception as exc:
+                if final_answer:
+                    # Partial text already reached the caller -- restarting via
+                    # the blocking call below would duplicate it client-side, so
+                    # the partial stream becomes the final answer instead of a
+                    # clean retry. Logged loudly since this is a real quality
+                    # degradation, not the ordinary "provider doesn't stream" case.
+                    logger.warning(
+                        "%s streaming synthesis failed mid-stream, keeping partial answer: %s",
+                        synthesis_provider.name,
+                        exc,
+                    )
+                else:
+                    logger.warning(
+                        "%s streaming synthesis failed before any output, falling back to a blocking call: %s",
+                        synthesis_provider.name,
+                        exc,
+                    )
+                    stream_fn = None
+
+        if stream_fn is None and not final_answer:
+            try:
+                final_answer = _call_with_timeout(
+                    synthesis_provider.chat,
+                    JUDGE_TIMEOUT_SECONDS,
+                    messages=synthesis_messages,
+                    temperature=0.1,
+                    gen_p=synthesis_gen,
+                )
+            except Exception:
+                final_answer = successful[0].text
+            yield {"event": "token", "text": final_answer}
+    else:
+        try:
+            final_answer = _call_with_timeout(
+                synthesis_provider.chat,
+                JUDGE_TIMEOUT_SECONDS,
+                messages=synthesis_messages,
+                temperature=0.1,
+                gen_p=synthesis_gen,
+            )
+        except Exception:
+            final_answer = successful[0].text
+
+    if detect_sensitive_hits(final_answer):
+        final_answer = redact_sensitive(final_answer)
+        if stream:
+            yield {"event": "redacted", "text": final_answer}
+
+    final_answer = final_answer.strip()
+    yield {"event": "synthesis_done", "answer": final_answer, "synthesis_provider": synthesis_provider}
+
+
 def build_ensemble_answer(
     providers: Sequence[ChatProvider],
     history: Sequence[Dict[str, str]],
@@ -1813,56 +1938,13 @@ def build_ensemble_answer(
             "fallback model."
         )
 
-    top_candidates = successful[:3]
-    synthesis_provider = routed_providers[top_candidates[0].provider_index]
-    for candidate in top_candidates:
-        provider = routed_providers[candidate.provider_index]
-        if provider.name != "Local TinyGPT (from scratch)":
-            synthesis_provider = provider
-            break
-
-    citation_rule = (
-        "- Keep citations like [S1] when factual claims are retained.\n"
-        if sources
-        else "- No local sources were used for this answer -- do not invent or keep any [S#] citation.\n"
-    )
-    synthesis_prompt = (
-        "You are the final judge. Merge the best parts of candidate answers into one superior response.\n"
-        "Rules:\n"
-        "- Keep only claims with source support or mark as uncertain.\n"
-        "- Preserve balanced framing to reduce bias.\n"
-        f"{citation_rule}"
-        "- If candidates conflict, explain the conflict briefly.\n\n"
-        f"User question:\n{redact_sensitive(user_input) if privacy_redaction else user_input}\n\n"
-        "Candidate answers:\n"
-    )
-    for idx, item in enumerate(top_candidates, start=1):
-        synthesis_prompt += (
-            f"Candidate {idx} ({item.bot_name}, provider={item.provider_name}, score={item.total_score:.2f}):\n"
-            f"{item.text}\n\n"
-        )
-
-    synthesis_messages = [
-        {"role": "system", "content": "Produce one final, practical, unbiased answer."},
-        {"role": "user", "content": synthesis_prompt},
-    ]
-
-    try:
-        synthesis_gen = GenerationConfig(temperature=0.1, max_tokens=gen_p.max_tokens)
-        final_answer = _call_with_timeout(
-            synthesis_provider.chat,
-            JUDGE_TIMEOUT_SECONDS,
-            messages=synthesis_messages,
-            temperature=0.1,
-            gen_p=synthesis_gen,
-        )
-    except Exception:
-        final_answer = successful[0].text
-
-    if detect_sensitive_hits(final_answer):
-        final_answer = redact_sensitive(final_answer)
-
-    final_answer = final_answer.strip()
+    synthesis_event = None
+    for event in synthesize_answer(
+        successful, routed_providers, user_input, privacy_redaction, gen_p, sources, stream=False
+    ):
+        synthesis_event = event
+    final_answer = synthesis_event["answer"]
+    synthesis_provider = synthesis_event["synthesis_provider"]
 
     confidence_score: float | None = None
     if deep_review:
@@ -1941,91 +2023,18 @@ def build_ensemble_answer_stream(
             "fallback model."
         )
 
-    top_candidates = successful[:3]
-    synthesis_provider = routed_providers[top_candidates[0].provider_index]
-    for candidate in top_candidates:
-        provider = routed_providers[candidate.provider_index]
-        if provider.name != "Local TinyGPT (from scratch)":
-            synthesis_provider = provider
-            break
-
-    citation_rule = (
-        "- Keep citations like [S1] when factual claims are retained.\n"
-        if sources
-        else "- No local sources were used for this answer -- do not invent or keep any [S#] citation.\n"
-    )
-    synthesis_prompt = (
-        "You are the final judge. Merge the best parts of candidate answers into one superior response.\n"
-        "Rules:\n"
-        "- Keep only claims with source support or mark as uncertain.\n"
-        "- Preserve balanced framing to reduce bias.\n"
-        f"{citation_rule}"
-        "- If candidates conflict, explain the conflict briefly.\n\n"
-        f"User question:\n{redact_sensitive(user_input) if privacy_redaction else user_input}\n\n"
-        "Candidate answers:\n"
-    )
-    for idx, item in enumerate(top_candidates, start=1):
-        synthesis_prompt += (
-            f"Candidate {idx} ({item.bot_name}, provider={item.provider_name}, score={item.total_score:.2f}):\n"
-            f"{item.text}\n\n"
-        )
-
-    synthesis_messages = [
-        {"role": "system", "content": "Produce one final, practical, unbiased answer."},
-        {"role": "user", "content": synthesis_prompt},
-    ]
-    synthesis_gen = GenerationConfig(temperature=0.1, max_tokens=gen_p.max_tokens)
-
     yield {"event": "status", "stage": "synthesizing"}
 
     final_answer = ""
-    stream_fn = getattr(synthesis_provider, "chat_stream", None)
-    if stream_fn is not None:
-        try:
-            raw_stream = stream_fn(messages=synthesis_messages, temperature=0.1, gen_p=synthesis_gen)
-            for chunk in _iter_stream_with_timeout(raw_stream, JUDGE_TIMEOUT_SECONDS):
-                if not chunk:
-                    continue
-                final_answer += chunk
-                yield {"event": "token", "text": chunk}
-        except Exception as exc:
-            if final_answer:
-                # Partial text already reached the caller -- restarting via
-                # the blocking call below would duplicate it client-side, so
-                # the partial stream becomes the final answer instead of a
-                # clean retry. Logged loudly since this is a real quality
-                # degradation, not the ordinary "provider doesn't stream" case.
-                logger.warning(
-                    "%s streaming synthesis failed mid-stream, keeping partial answer: %s",
-                    synthesis_provider.name,
-                    exc,
-                )
-            else:
-                logger.warning(
-                    "%s streaming synthesis failed before any output, falling back to a blocking call: %s",
-                    synthesis_provider.name,
-                    exc,
-                )
-                stream_fn = None
-
-    if stream_fn is None and not final_answer:
-        try:
-            final_answer = _call_with_timeout(
-                synthesis_provider.chat,
-                JUDGE_TIMEOUT_SECONDS,
-                messages=synthesis_messages,
-                temperature=0.1,
-                gen_p=synthesis_gen,
-            )
-        except Exception:
-            final_answer = successful[0].text
-        yield {"event": "token", "text": final_answer}
-
-    if detect_sensitive_hits(final_answer):
-        final_answer = redact_sensitive(final_answer)
-        yield {"event": "redacted", "text": final_answer}
-
-    final_answer = final_answer.strip()
+    synthesis_provider = routed_providers[0]
+    for event in synthesize_answer(
+        successful, routed_providers, user_input, privacy_redaction, gen_p, sources, stream=True
+    ):
+        if event["event"] == "synthesis_done":
+            final_answer = event["answer"]
+            synthesis_provider = event["synthesis_provider"]
+        else:
+            yield event
 
     confidence_score: float | None = None
     if deep_review:

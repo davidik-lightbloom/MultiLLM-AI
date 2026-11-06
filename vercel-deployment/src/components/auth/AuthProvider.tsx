@@ -14,6 +14,8 @@ interface Profile {
   plan_expires_at: string | null;
   is_active: boolean;
   local_only_mode: boolean;
+  default_mode: "fast" | "deep";
+  enabled_skills: string[];
   created_at: string;
   updated_at: string;
 }
@@ -60,6 +62,8 @@ function demoUser(email: string, name: string): User & { profile: Profile } {
       plan_expires_at: null,
       is_active: true,
       local_only_mode: false,
+      default_mode: "fast",
+      enabled_skills: ["general"],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
