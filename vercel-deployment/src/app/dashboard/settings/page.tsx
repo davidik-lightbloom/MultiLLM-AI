@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Save, User, Shield, Bell, Check, X, AlertTriangle, Zap } from "lucide-react";
@@ -30,6 +30,23 @@ export default function SettingsPage() {
   // coordinator is the first thing that actually reads enabled_skills.
   const [aiMode, setAiMode] = useState<"fast" | "deep">(user?.profile?.default_mode === "deep" ? "deep" : "fast");
   const [enabledSkills, setEnabledSkills] = useState<string[]>(user?.profile?.enabled_skills || ["general"]);
+
+  // Bug found live 2026-11-06: the useState initializers above only ever run
+  // once, at this component's first mount -- on a fresh page load/refresh
+  // they displayed "Fast"/["general"] regardless of what was actually saved,
+  // because ProtectedRoute's own loading gate doesn't guarantee `user` (with
+  // its profile already attached) is non-null on this component's very
+  // first render. Confirmed via a live round-trip: toggled Deep mode +
+  // "coding" on, refreshed, DB correctly showed default_mode="deep" and
+  // enabled_skills=["general","coding"] (so the save path was never broken),
+  // but the UI kept showing Fast/general until a new toggle click overwrote
+  // the correct saved value again. Mirrors the homepage's own existing sync
+  // effect for localOnly/mode (src/app/page.tsx) -- same bug shape, same fix.
+  useEffect(() => {
+    if (!user) return;
+    setAiMode(user.profile?.default_mode === "deep" ? "deep" : "fast");
+    setEnabledSkills(user.profile?.enabled_skills || ["general"]);
+  }, [user]);
 
   const handleModeToggle = async (wantsDeep: boolean) => {
     const next = wantsDeep ? "deep" : "fast";
