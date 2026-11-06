@@ -296,11 +296,15 @@ async def query_ensemble(request: QueryRequest, http_request: Request):
 
     privacy_redaction = request.privacy_redaction if request.privacy_redaction is not None else PRIVACY_REDACTION
     # Deep Review itself stays a paid-plan perk gated entirely on the Next.js
-    # side (DEEP_REVIEW_PLANS) -- mode=="deep" alone must never grant it here,
-    # or a free-tier caller could get it for free just by setting mode. This
-    # force-true is defense-in-depth for any future direct caller of this
-    # service that bypasses that gating, not the primary enforcement point.
-    deep_review_effective = bool(request.deep_review) or mode == "deep"
+    # side (DEEP_REVIEW_PLANS) -- mode=="deep" MUST NOT grant it here. route.ts
+    # forwards `mode` unconditionally to every caller regardless of plan (only
+    # the bot_count bump above is meant to be ungated), so deriving
+    # deep_review from mode here would let any free-tier/anonymous caller get
+    # the paid feature for free just by setting mode="deep" -- this isn't a
+    # hypothetical, it was confirmed live in production. request.deep_review
+    # alone (already gated server-side by route.ts's DEEP_REVIEW_PLANS check
+    # before it's ever set to true) is the only legitimate source of truth.
+    deep_review_effective = bool(request.deep_review)
 
     try:
         start = time.perf_counter()
@@ -414,7 +418,7 @@ async def query_ensemble_stream(request: QueryRequest, http_request: Request):
     if request.local_only:
         bot_count = min(bot_count, 2)
     privacy_redaction = request.privacy_redaction if request.privacy_redaction is not None else PRIVACY_REDACTION
-    deep_review_effective = bool(request.deep_review) or mode == "deep"
+    deep_review_effective = bool(request.deep_review)
 
     async def event_source():
         start = time.perf_counter()

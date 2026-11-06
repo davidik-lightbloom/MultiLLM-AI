@@ -123,7 +123,17 @@ jobs:
       - name: Test function imports
         run: |
           python -c "from main import app; print('Import OK')"
-      
+
+      - name: Run Python tests
+        # test_main.py's 10+ unit tests (mode/deep_review gating, local-only
+        # bot_count caps, etc.) previously ran only locally -- this job
+        # imported main.py and curled /api/health but never actually executed
+        # them, so a real regression (e.g. the mode="deep" Deep Review
+        # paywall bypass this test suite now covers) could merge and deploy
+        # without CI ever catching it.
+        run: |
+          pytest -v
+
       - name: Test health endpoint
         run: |
           uvicorn main:app --host 0.0.0.0 --port 8000 &

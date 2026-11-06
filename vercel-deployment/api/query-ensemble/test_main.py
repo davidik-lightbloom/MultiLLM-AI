@@ -212,11 +212,17 @@ def test_query_endpoint_fast_mode_is_default_and_unaffected(monkeypatch):
     assert resp.json()["routing"]["mode"] == "fast"
 
 
-def test_query_endpoint_deep_mode_forces_deep_review_as_defense_in_depth(monkeypatch):
-    """Deep Review itself is tier-gated entirely on the Next.js side
-    (DEEP_REVIEW_PLANS) before this field ever reaches this service -- this
-    force-true only guards a future direct caller that bypasses that gate,
-    it is not where the paid/free boundary is actually enforced."""
+def test_query_endpoint_deep_mode_alone_does_not_grant_deep_review(monkeypatch):
+    """Regression test for a real bug found live in production: Deep Review
+    is tier-gated entirely on the Next.js side (DEEP_REVIEW_PLANS) *before*
+    request.deep_review is ever set to true, but route.ts forwards `mode` to
+    every caller unconditionally regardless of plan (only the bot_count bump
+    is meant to be ungated -- see route.ts's own comment). A previous version
+    of this endpoint derived deep_review from `mode == "deep"` as "defense in
+    depth," which actually meant any free-tier/anonymous caller could get the
+    paid Deep Review feature for free just by setting mode="deep" -- there is
+    no other enforcement point, so that was the actual security boundary, not
+    a backstop for one. deep_review must depend solely on request.deep_review."""
     captured = {}
 
     def fake_build_ensemble_answer(**kwargs):
@@ -238,5 +244,37 @@ def test_query_endpoint_deep_mode_forces_deep_review_as_defense_in_depth(monkeyp
     )
 
     assert resp.status_code == 200
+    assert captured["deep_review"] is False
+    assert resp.json()["routing"]["mode"] == "deep"
+
+
+def test_query_endpoint_deep_mode_with_explicit_deep_review_still_works(monkeypatch):
+    """A caller that's actually entitled (route.ts already set deep_review=true
+    server-side after its own DEEP_REVIEW_PLANS check) must still get it
+    alongside Deep mode's bot_count bump -- this isn't mode-gated, just
+    confirming the two features compose correctly."""
+    captured = {}
+
+    def fake_build_ensemble_answer(**kwargs):
+        captured["deep_review"] = kwargs["deep_review"]
+        captured["bot_count"] = kwargs["bot_count"]
+        return "answer", [], {}, None
+
+    monkeypatch.setattr(main, "build_ensemble_answer", fake_build_ensemble_answer)
+    monkeypatch.setattr(
+        main,
+        "providers",
+        [type("FakeProvider", (), {"name": "Fake", "model": "fake-model", "size": lambda self: 1})()],
+    )
+    client = TestClient(main.app)
+
+    resp = client.post(
+        "/api/query",
+        json={"prompt": "hello", "mode": "deep", "deep_review": True},
+        headers=AUTH_HEADERS,
+    )
+
+    assert resp.status_code == 200
     assert captured["deep_review"] is True
+    assert captured["bot_count"] == main.MAX_PARALLEL_BOTS
     assert resp.json()["routing"]["mode"] == "deep"
