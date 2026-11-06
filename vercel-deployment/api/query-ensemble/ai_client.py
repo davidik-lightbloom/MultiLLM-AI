@@ -1943,6 +1943,9 @@ def build_ensemble_answer(
         successful, routed_providers, user_input, privacy_redaction, gen_p, sources, stream=False
     ):
         synthesis_event = event
+    # synthesize_answer always yields exactly one event in the stream=False
+    # path (its final "synthesis_done"), so the loop above always runs.
+    assert synthesis_event is not None
     final_answer = synthesis_event["answer"]
     synthesis_provider = synthesis_event["synthesis_provider"]
 
