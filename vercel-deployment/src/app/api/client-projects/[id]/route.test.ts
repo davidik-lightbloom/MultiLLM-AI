@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   getClientProject: vi.fn(),
   deleteClientProject: vi.fn(),
   isDemoMode: vi.fn(),
+  getTeamContext: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/serverAuth", () => ({
@@ -17,6 +18,10 @@ vi.mock("@/lib/supabase/services", () => ({
 vi.mock("@/lib/demoMode", () => ({
   isDemoMode: mocks.isDemoMode,
 }));
+vi.mock("@/lib/supabase/team", () => ({
+  getTeamContext: mocks.getTeamContext,
+  isTeamManager: (role: string) => role === "owner" || role === "admin",
+}));
 
 import { DELETE } from "./route";
 
@@ -28,6 +33,17 @@ describe("DELETE /api/client-projects/[id]", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.isDemoMode.mockReturnValue(false);
+    mocks.getTeamContext.mockImplementation(async (userId: string) => ({ tenantId: userId, role: "owner" }));
+  });
+
+  it("refuses deletion for a plain team member (not owner/admin)", async () => {
+    mocks.getAuthenticatedUserId.mockResolvedValue("member-1");
+    mocks.getTeamContext.mockResolvedValue({ tenantId: "owner-1", role: "member" });
+
+    const res = await DELETE(new Request("http://localhost/api/client-projects/p1"), params("p1"));
+
+    expect(res.status).toBe(403);
+    expect(mocks.getClientProject).not.toHaveBeenCalled();
   });
 
   it("refuses to delete a client project in demo mode", async () => {

@@ -7,6 +7,7 @@ import {
 } from "@/lib/supabase/services";
 import { hashApiKey, KEY_PREFIX_LENGTH } from "@/lib/apiKeyAuth";
 import { getAuthenticatedUserId } from "@/lib/supabase/serverAuth";
+import { getTeamContext, isTeamManager } from "@/lib/supabase/team";
 import { isDemoMode } from "@/lib/demoMode";
 import { demoModeUnavailable } from "@/lib/demoModeApi";
 
@@ -31,7 +32,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const keys = await getPlatformApiKeys(userId);
+  const { tenantId } = await getTeamContext(userId);
+  const keys = await getPlatformApiKeys(tenantId);
   return NextResponse.json({
     keys: keys.map((k) => ({
       id: k.id,
@@ -55,6 +57,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  const { tenantId, role } = await getTeamContext(userId);
+  if (!isTeamManager(role)) {
+    return NextResponse.json({ error: "Only a team owner or admin can generate API keys" }, { status: 403 });
+  }
+
   const body = await req.json().catch(() => ({}));
   const name = typeof body?.name === "string" ? body.name.trim() : "";
   const requestedTier: Tier = VALID_TIERS.includes(body?.tier) ? body.tier : "free";
@@ -67,7 +74,7 @@ export async function POST(req: NextRequest) {
   // caller's own actual plan. A free-plan account could otherwise mint an
   // "enterprise" key directly against this endpoint (bypassing the disabled
   // button in the UI) and get that tier's 1000 req/min instead of free's 10.
-  const profile = await getProfile(userId);
+  const profile = await getProfile(tenantId);
   const planTier: Tier = (profile?.plan as Tier) || "free";
   if (TIER_RANK[requestedTier] > TIER_RANK[planTier]) {
     return NextResponse.json(
@@ -81,7 +88,7 @@ export async function POST(req: NextRequest) {
   const keyHash = hashApiKey(plaintextKey);
   const keyPrefix = plaintextKey.slice(0, KEY_PREFIX_LENGTH);
 
-  const created = await createPlatformApiKey(userId, name, tier, keyPrefix, keyHash);
+  const created = await createPlatformApiKey(tenantId, name, tier, keyPrefix, keyHash);
   if (!created) {
     return NextResponse.json({ error: "Failed to create API key" }, { status: 500 });
   }

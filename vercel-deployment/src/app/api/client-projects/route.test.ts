@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   createClientProject: vi.fn(),
   getClientProjects: vi.fn(),
   isDemoMode: vi.fn(),
+  getTeamContext: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/serverAuth", () => ({
@@ -22,6 +23,10 @@ vi.mock("@/lib/supabase/services", () => ({
 }));
 vi.mock("@/lib/demoMode", () => ({
   isDemoMode: mocks.isDemoMode,
+}));
+vi.mock("@/lib/supabase/team", () => ({
+  getTeamContext: mocks.getTeamContext,
+  isTeamManager: (role: string) => role === "owner" || role === "admin",
 }));
 
 import { POST } from "./route";
@@ -39,6 +44,16 @@ describe("POST /api/client-projects", () => {
     vi.clearAllMocks();
     mocks.getAuthenticatedUserId.mockResolvedValue("user-1");
     mocks.isDemoMode.mockReturnValue(false);
+    mocks.getTeamContext.mockImplementation(async (userId: string) => ({ tenantId: userId, role: "owner" }));
+  });
+
+  it("refuses creation for a plain team member (not owner/admin)", async () => {
+    mocks.getTeamContext.mockResolvedValue({ tenantId: "owner-1", role: "member" });
+
+    const res = await POST(postRequest({ name: "Acme" }));
+
+    expect(res.status).toBe(403);
+    expect(mocks.createClientProject).not.toHaveBeenCalled();
   });
 
   it("refuses to create a client project in demo mode", async () => {

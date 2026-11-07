@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPlatformApiKeyById, deletePlatformApiKey } from "@/lib/supabase/services";
 import { getAuthenticatedUserId } from "@/lib/supabase/serverAuth";
+import { getTeamContext, isTeamManager } from "@/lib/supabase/team";
 import { isDemoMode } from "@/lib/demoMode";
 import { demoModeUnavailable } from "@/lib/demoModeApi";
 
@@ -18,8 +19,13 @@ export async function DELETE(req: NextRequest, props: { params: Promise<{ id: st
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  const { tenantId, role } = await getTeamContext(userId);
+  if (!isTeamManager(role)) {
+    return NextResponse.json({ error: "Only a team owner or admin can revoke API keys" }, { status: 403 });
+  }
+
   const existing = await getPlatformApiKeyById(params.id);
-  if (!existing || existing.user_id !== userId) {
+  if (!existing || existing.user_id !== tenantId) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 

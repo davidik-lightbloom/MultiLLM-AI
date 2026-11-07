@@ -37,6 +37,24 @@ export function lowCreditsEmail(params: { name: string | null; creditsRemaining:
   };
 }
 
+export function teamInviteEmail(params: { inviterName: string | null; role: "admin" | "member"; inviteUrl: string }): {
+  subject: string;
+  text: string;
+} {
+  const inviter = params.inviterName || "Someone";
+  return {
+    subject: `${inviter} invited you to their MultiLLM team`,
+    text: [
+      `${inviter} has invited you to join their MultiLLM team as a${params.role === "admin" ? "n admin" : " member"}.`,
+      "Accepting shares their plan, credits, and client projects -- sign in (or create a free account with this same email) and open the link below to join:",
+      "",
+      params.inviteUrl,
+      "",
+      "This link expires in 7 days. If you weren't expecting this, you can ignore this email.",
+    ].join("\n"),
+  };
+}
+
 export function planExpiringEmail(params: { name: string | null; planExpiresAt: string }): {
   subject: string;
   text: string;

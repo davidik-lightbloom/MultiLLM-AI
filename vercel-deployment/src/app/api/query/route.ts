@@ -12,6 +12,7 @@ import {
 } from "@/lib/supabase/services";
 import { authenticateApiKey } from "@/lib/apiKeyAuth";
 import { getAuthenticatedUserId } from "@/lib/supabase/serverAuth";
+import { getTeamContext } from "@/lib/supabase/team";
 import { checkRateLimit, getClientIp, type Tier } from "@/lib/rateLimiter";
 import { decryptApiKey } from "@/lib/encryption";
 import { isDemoMode } from "@/lib/demoMode";
@@ -138,7 +139,14 @@ export async function POST(req: NextRequest) {
   // request body -- that would let a caller claim any user_id they like.
   const apiKeyAuth = await authenticateApiKey(req);
   const sessionUserId = apiKeyAuth ? null : await getAuthenticatedUserId();
-  const userId = apiKeyAuth?.userId || sessionUserId || "";
+  // A session user on a team resolves to their team owner's tenant for
+  // billing/credits/BYO-keys/project-ownership purposes -- actorId (the real
+  // signed-in person) is kept separately only to tag queries.actor_id for
+  // "asked by Jane" attribution. An API-key call has no team concept of its
+  // own: the key's owner (apiKeyAuth.userId) already *is* the tenant.
+  const tenantId = sessionUserId ? (await getTeamContext(sessionUserId)).tenantId : null;
+  const userId = apiKeyAuth?.userId || tenantId || sessionUserId || "";
+  const actorId = apiKeyAuth ? null : sessionUserId || null;
 
   try {
     const body = await req.json();
@@ -310,7 +318,7 @@ export async function POST(req: NextRequest) {
   options = { ...options, mode };
 
   if (requestedStream) {
-    return handleStreamingQuery({ prompt, options, requestId, userId, projectId, apiKeyAuth });
+    return handleStreamingQuery({ prompt, options, requestId, userId, actorId, projectId, apiKeyAuth });
   }
 
   // Policy: when the Python ensemble is unreachable, fail loudly (503) rather
@@ -355,6 +363,7 @@ export async function POST(req: NextRequest) {
     const queryRecord = {
       user_id: userId,
       project_id: projectId,
+      actor_id: actorId,
       prompt,
       answer,
       top_provider: candidates[0]?.provider_name || "MultiLLM",
@@ -415,10 +424,11 @@ async function handleStreamingQuery(params: {
   options: any;
   requestId: string;
   userId: string;
+  actorId: string | null;
   projectId: string | null;
   apiKeyAuth: Awaited<ReturnType<typeof authenticateApiKey>>;
 }) {
-  const { prompt, options, requestId, userId, projectId, apiKeyAuth } = params;
+  const { prompt, options, requestId, userId, actorId, projectId, apiKeyAuth } = params;
 
   const upstream = await streamPythonEnsemble(prompt, options, requestId);
   if (!upstream || !upstream.body) {
@@ -492,6 +502,7 @@ async function handleStreamingQuery(params: {
         const queryRecord = {
           user_id: userId,
           project_id: projectId,
+          actor_id: actorId,
           prompt,
           answer: doneEvent.answer,
           top_provider: doneEvent.candidates?.[0]?.provider_name || "MultiLLM",

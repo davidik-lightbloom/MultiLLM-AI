@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/dashboard/projects", label: "Client Projects" },
   { href: "/dashboard/api-keys", label: "API Keys" },
   { href: "/dashboard/analytics", label: "Analytics" },
+  { href: "/dashboard/team", label: "Team" },
   // Training isn't linked here -- there's no working training backend in
   // production (see vercel-deployment/training-job-disabled/DISABLED.md).
   // The page itself still exists at /dashboard/training with an honest

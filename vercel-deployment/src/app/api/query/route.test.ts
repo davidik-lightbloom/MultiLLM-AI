@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   insertQuery: vi.fn(),
   getTodayProviderSpendUsd: vi.fn(),
   recordQueryError: vi.fn(),
+  getTeamContext: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/serverAuth", () => ({
@@ -47,6 +48,9 @@ vi.mock("@/lib/encryption", () => ({
 }));
 vi.mock("@/lib/demoMode", () => ({
   isDemoMode: mocks.isDemoMode,
+}));
+vi.mock("@/lib/supabase/team", () => ({
+  getTeamContext: mocks.getTeamContext,
 }));
 
 import { POST } from "./route";
@@ -88,6 +92,7 @@ describe("POST /api/query", () => {
     mocks.checkRateLimit.mockResolvedValue({ allowed: true, retryAfterSeconds: 0 });
     mocks.isDemoMode.mockReturnValue(false);
     mocks.insertQuery.mockResolvedValue({ data: null, error: null });
+    mocks.getTeamContext.mockImplementation(async (userId: string) => ({ tenantId: userId, role: "owner" }));
     mocks.getTodayProviderSpendUsd.mockResolvedValue(0);
     mocks.recordQueryError.mockResolvedValue(undefined);
   });
@@ -418,6 +423,48 @@ describe("POST /api/query", () => {
       const proBody = JSON.parse(proFetchSpy.mock.calls[0][1].body);
       expect(proBody.mode).toBe("deep");
       expect(proBody.deep_review).toBe(true);
+    });
+  });
+
+  describe("team tenant resolution", () => {
+    function jsonResponse(body: unknown) {
+      return { ok: true, json: async () => body };
+    }
+
+    it("bills/saves a team member's query against the team owner's tenant, tagging actor_id with the real caller", async () => {
+      mocks.getAuthenticatedUserId.mockResolvedValue("member-1");
+      mocks.getTeamContext.mockResolvedValue({ tenantId: "owner-1", role: "member" });
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue(
+          jsonResponse({ answer: "Hi.", candidates: [], sources: [], metrics: {} })
+        )
+      );
+
+      const res = await POST(postRequest({ prompt: "hello" }));
+
+      expect(res.status).toBe(200);
+      expect(mocks.getProfile).toHaveBeenCalledWith("owner-1");
+      expect(mocks.consumeCredits).toHaveBeenCalledWith("owner-1", 1, expect.anything());
+      expect(mocks.insertQuery).toHaveBeenCalledWith(
+        expect.objectContaining({ user_id: "owner-1", actor_id: "member-1" })
+      );
+    });
+
+    it("sets actor_id to the owner's own id for a solo (non-team) account, not null", async () => {
+      mocks.getTeamContext.mockResolvedValue({ tenantId: "user-1", role: "owner" });
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue(
+          jsonResponse({ answer: "Hi.", candidates: [], sources: [], metrics: {} })
+        )
+      );
+
+      await POST(postRequest({ prompt: "hello" }));
+
+      expect(mocks.insertQuery).toHaveBeenCalledWith(
+        expect.objectContaining({ user_id: "user-1", actor_id: "user-1" })
+      );
     });
   });
 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getQueries, getQueryStats } from "@/lib/supabase/services";
 import { getAuthenticatedUserId } from "@/lib/supabase/serverAuth";
+import { getTeamContext } from "@/lib/supabase/team";
 import { isDemoMode } from "@/lib/demoMode";
 
 export const runtime = "nodejs";
@@ -31,9 +32,14 @@ export async function GET(req: NextRequest) {
 
   const projectId = req.nextUrl.searchParams.get("project_id");
 
+  // Queries are always logged against the tenant (team owner) id -- a team
+  // member's own queries live there too, so analytics has to read the same
+  // tenant id back rather than the member's own session id (which would
+  // otherwise just look like an empty history).
+  const { tenantId } = await getTeamContext(userId);
   const [allRows, stats] = await Promise.all([
-    getQueries(userId, 500, 0),
-    getQueryStats(userId),
+    getQueries(tenantId, 500, 0),
+    getQueryStats(tenantId),
   ]);
   const rows = projectId ? allRows.filter((r) => r.project_id === projectId) : allRows;
 

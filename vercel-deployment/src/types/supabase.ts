@@ -93,6 +93,7 @@ export interface Database {
           id: string;
           user_id: string;
           project_id: string | null;
+          actor_id: string | null;
           prompt: string;
           answer: string;
           top_provider: string;
@@ -110,6 +111,7 @@ export interface Database {
           id?: string;
           user_id: string;
           project_id?: string | null;
+          actor_id?: string | null;
           prompt: string;
           answer: string;
           top_provider: string;
@@ -127,6 +129,7 @@ export interface Database {
           id?: string;
           user_id?: string;
           project_id?: string | null;
+          actor_id?: string | null;
           prompt?: string;
           answer?: string;
           top_provider?: string;
@@ -138,6 +141,61 @@ export interface Database {
           candidates?: Json | null;
           sources?: Json | null;
           estimated_cost_usd?: number;
+          created_at?: string;
+        };
+      };
+      team_members: {
+        Row: {
+          id: string;
+          owner_id: string;
+          member_id: string;
+          role: 'admin' | 'member';
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          member_id: string;
+          role?: 'admin' | 'member';
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          member_id?: string;
+          role?: 'admin' | 'member';
+          created_at?: string;
+        };
+      };
+      team_invites: {
+        Row: {
+          id: string;
+          owner_id: string;
+          invited_email: string;
+          role: 'admin' | 'member';
+          token_hash: string;
+          expires_at: string;
+          accepted_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          invited_email: string;
+          role?: 'admin' | 'member';
+          token_hash: string;
+          expires_at: string;
+          accepted_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_id?: string;
+          invited_email?: string;
+          role?: 'admin' | 'member';
+          token_hash?: string;
+          expires_at?: string;
+          accepted_at?: string | null;
           created_at?: string;
         };
       };

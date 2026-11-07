@@ -20,8 +20,15 @@ interface Profile {
   updated_at: string;
 }
 
+export type TeamRole = "owner" | "admin" | "member";
+
 interface AuthContextType {
   user: (User & { profile?: Profile }) | null;
+  // "owner" for a solo account or a team's owner; "admin"/"member" when this
+  // session is a team member acting on the owner's tenant (user.profile then
+  // reflects the owner's plan/credits/mode/skills, not this account's own row
+  // -- see fetchProfile below and schema.sql's team_members comment).
+  teamRole: TeamRole;
   loading: boolean;
   demoMode: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -29,6 +36,12 @@ interface AuthContextType {
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
+  // Tenant-aware AI-behavior preferences (default_mode, enabled_skills,
+  // local_only_mode) -- routed through /api/account/preferences, which
+  // resolves the team tenant server-side, rather than updateProfile's direct
+  // client write (which always targets the caller's own profiles row and
+  // would silently miss the shared tenant settings for a team member).
+  updatePreferences: (updates: Partial<Pick<Profile, "default_mode" | "enabled_skills" | "local_only_mode">>) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   updatePassword: (newPassword: string) => Promise<void>;
 }
@@ -82,39 +95,64 @@ function loadDemoUser(): (User & { profile: Profile }) | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<(User & { profile?: Profile }) | null>(null);
+  const [teamRole, setTeamRole] = useState<TeamRole>("owner");
   const [loading, setLoading] = useState(true);
   const demoMode = isDemoMode();
   const supabase = getBrowserSupabase();
 
-  const fetchProfile = async (userId: string): Promise<Profile | null> => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    if (error) return null;
-    return data;
+  // A team member's effective profile (plan/credits/default_mode/
+  // enabled_skills) is the team owner's row, not their own -- this is NOT
+  // just defense in depth, the owner's row grant on "profiles" SELECT exists
+  // specifically so this direct client-side read can work (see schema.sql).
+  // Name/email still come from the member's own row so the dashboard shows
+  // *their* identity, not the owner's.
+  const fetchProfile = async (userId: string): Promise<{ profile: Profile | null; role: TeamRole }> => {
+    const { data: membership } = await supabase
+      .from("team_members")
+      .select("owner_id, role")
+      .eq("member_id", userId)
+      .maybeSingle();
+
+    if (membership) {
+      const [{ data: ownerProfile }, { data: ownProfile }] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", membership.owner_id).single(),
+        supabase.from("profiles").select("name, email").eq("id", userId).single(),
+      ]);
+      if (ownerProfile) {
+        return {
+          profile: { ...ownerProfile, name: ownProfile?.name ?? ownerProfile.name, email: ownProfile?.email ?? ownerProfile.email },
+          role: membership.role as TeamRole,
+        };
+      }
+    }
+
+    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+    return { profile: error ? null : data, role: "owner" };
   };
 
   const fetchUser = async () => {
     if (demoMode) {
       setUser(loadDemoUser());
+      setTeamRole("owner");
       setLoading(false);
       return;
     }
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        const profile = await fetchProfile(session.user.id);
+        const { profile, role } = await fetchProfile(session.user.id);
         setUser({ ...session.user, profile: profile || undefined });
+        setTeamRole(role);
         // Fire-and-forget: deduped server-side (sent_emails), safe to call
         // on every session resolution, not just a true "first" login.
         fetch("/api/account", { method: "POST" }).catch(() => {});
       } else {
         setUser(null);
+        setTeamRole("owner");
       }
     } catch {
       setUser(null);
+      setTeamRole("owner");
     } finally {
       setLoading(false);
     }
@@ -126,10 +164,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!demoMode) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
 if (session?.user) {
-            const profile = await fetchProfile(session.user.id);
+            const { profile, role } = await fetchProfile(session.user.id);
             setUser({ ...session.user, profile: profile || undefined });
+            setTeamRole(role);
           } else {
             setUser(null);
+            setTeamRole("owner");
           }
       });
       return () => subscription.unsubscribe();
@@ -206,6 +246,23 @@ if (session?.user) {
     await fetchUser();
   };
 
+  const updatePreferences = async (updates: Partial<Pick<Profile, "default_mode" | "enabled_skills" | "local_only_mode">>) => {
+    if (demoMode) {
+      await updateProfile(updates);
+      return;
+    }
+    const res = await fetch("/api/account/preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Failed to save preferences");
+    }
+    await fetchUser();
+  };
+
   const requestPasswordReset = async (email: string) => {
     if (demoMode) {
       throw new Error("Password reset isn't available in demo mode (no email backend configured).");
@@ -226,7 +283,7 @@ if (session?.user) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, demoMode, login, register, logout, refreshUser, updateProfile, requestPasswordReset, updatePassword }}
+      value={{ user, teamRole, loading, demoMode, login, register, logout, refreshUser, updateProfile, updatePreferences, requestPasswordReset, updatePassword }}
     >
       {children}
     </AuthContext.Provider>

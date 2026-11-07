@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   createPlatformApiKey: vi.fn(),
   getPlatformApiKeys: vi.fn(),
   isDemoMode: vi.fn(),
+  getTeamContext: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/serverAuth", () => ({
@@ -19,6 +20,10 @@ vi.mock("@/lib/supabase/services", () => ({
 }));
 vi.mock("@/lib/demoMode", () => ({
   isDemoMode: mocks.isDemoMode,
+}));
+vi.mock("@/lib/supabase/team", () => ({
+  getTeamContext: mocks.getTeamContext,
+  isTeamManager: (role: string) => role === "owner" || role === "admin",
 }));
 
 import { POST } from "./route";
@@ -36,6 +41,16 @@ describe("POST /api/api-keys", () => {
     vi.clearAllMocks();
     mocks.getAuthenticatedUserId.mockResolvedValue("user-1");
     mocks.isDemoMode.mockReturnValue(false);
+    mocks.getTeamContext.mockImplementation(async (userId: string) => ({ tenantId: userId, role: "owner" }));
+  });
+
+  it("refuses key generation for a plain team member (not owner/admin)", async () => {
+    mocks.getTeamContext.mockResolvedValue({ tenantId: "owner-1", role: "member" });
+
+    const res = await POST(postRequest({ name: "Key", tier: "free" }));
+
+    expect(res.status).toBe(403);
+    expect(mocks.createPlatformApiKey).not.toHaveBeenCalled();
   });
 
   it("refuses to generate a key in demo mode", async () => {

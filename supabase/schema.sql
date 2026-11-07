@@ -417,6 +417,141 @@ CREATE INDEX IF NOT EXISTS idx_sent_emails_user_id ON public.sent_emails(user_id
 
 ALTER TABLE public.sent_emails ENABLE ROW LEVEL SECURITY;
 
+-- Multi-seat teams: an agency owner (the paying account) grants other real
+-- accounts access to operate under their profile (plan/credits/client
+-- projects/BYO keys all pooled at the owner). A user can be a member of at
+-- most one team at a time (UNIQUE(member_id)) -- the simplest tenant-boundary
+-- model, consistent with every other table in this schema treating
+-- profiles.id as the one tenant identity. Joining a team doesn't delete or
+-- move any client_projects/queries a member created before joining under
+-- their own id -- those rows are untouched, just not reachable from their
+-- dashboard while every route resolves their tenant to the owner instead
+-- (see getTeamContext in src/lib/supabase/team.ts). Only the owner manages
+-- the roster in V1 (invite/remove/role-change) -- 'admin' members get
+-- elevated query/project/key permissions (see the policies added below and
+-- the app-level role gates in the API routes) but not roster management,
+-- kept deliberately simple.
+CREATE TABLE IF NOT EXISTS public.team_members (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    owner_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    member_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    role TEXT NOT NULL DEFAULT 'member' CHECK (role IN ('admin', 'member')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT team_members_member_unique UNIQUE (member_id),
+    CONSTRAINT team_members_no_self_owner CHECK (owner_id != member_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_team_members_owner_id ON public.team_members(owner_id);
+
+ALTER TABLE public.team_members ENABLE ROW LEVEL SECURITY;
+
+-- A member can see their own membership row (so they know whose team they're
+-- on); the owner sees their whole roster. Mutation (invite acceptance aside,
+-- which goes through a service-role route -- see team_invites below) is
+-- owner-only, matching the "only the owner manages the roster in V1" note
+-- above.
+DROP POLICY IF EXISTS "Users can view own team membership" ON public.team_members;
+CREATE POLICY "Users can view own team membership" ON public.team_members
+    FOR SELECT USING ((SELECT auth.uid()) = owner_id OR (SELECT auth.uid()) = member_id);
+
+DROP POLICY IF EXISTS "Owners can manage their team roster" ON public.team_members;
+CREATE POLICY "Owners can manage their team roster" ON public.team_members
+    FOR ALL USING ((SELECT auth.uid()) = owner_id);
+
+-- Pending invitations. token_hash is a sha256 of a server-generated random
+-- token (never stored in plaintext, same pattern as platform_api_keys.key_hash)
+-- -- the raw token is only ever returned once, in the create-invite API
+-- response, and is the invite link itself
+-- (<request origin>/team/accept?token=<raw>). Deliberately NOT built on Supabase
+-- Auth's own admin.generateLink/hosted-verify mechanisms: this app found a
+-- real PKCE device-binding bug in that exact mechanism (a confirmation link
+-- only works on the browser that initiated the original request) -- a fully
+-- custom, app-owned token with no client-side crypto/device-state dependency
+-- sidesteps that whole bug class by construction, verified server-side only.
+CREATE TABLE IF NOT EXISTS public.team_invites (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    owner_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    invited_email TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'member' CHECK (role IN ('admin', 'member')),
+    token_hash TEXT NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    accepted_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_team_invites_owner_id ON public.team_invites(owner_id);
+
+ALTER TABLE public.team_invites ENABLE ROW LEVEL SECURITY;
+
+-- Owner-only -- the accepting user has no grant to see this row before they
+-- accept, since they aren't a team_members row yet. Acceptance itself reads
+-- this table via the service-role client in /api/team/invites/accept, not
+-- through this policy.
+DROP POLICY IF EXISTS "Owners can manage their team invites" ON public.team_invites;
+CREATE POLICY "Owners can manage their team invites" ON public.team_invites
+    FOR ALL USING ((SELECT auth.uid()) = owner_id);
+
+-- Team-aware access: a team member can act on the resources their team's
+-- owner already owns (client projects, queries, platform API keys), on top
+-- of each table's existing single-owner clause. Defense in depth only --
+-- every real authorization decision already happens in TypeScript via
+-- getTeamContext()/isTeamManager() in the API routes themselves, since this
+-- app's routes all use the service-role client (see services.ts) and never
+-- rely on RLS as the primary boundary.
+DROP POLICY IF EXISTS "Users can manage own client projects" ON public.client_projects;
+CREATE POLICY "Users can manage own client projects" ON public.client_projects
+    FOR ALL USING (
+        (SELECT auth.uid()) = user_id
+        OR (SELECT auth.uid()) IN (SELECT member_id FROM public.team_members WHERE owner_id = client_projects.user_id)
+    );
+
+DROP POLICY IF EXISTS "Users can view own queries" ON public.queries;
+CREATE POLICY "Users can view own queries" ON public.queries
+    FOR SELECT USING (
+        (SELECT auth.uid()) = user_id
+        OR (SELECT auth.uid()) IN (SELECT member_id FROM public.team_members WHERE owner_id = queries.user_id)
+    );
+
+DROP POLICY IF EXISTS "Users can create queries" ON public.queries;
+CREATE POLICY "Users can create queries" ON public.queries
+    FOR INSERT WITH CHECK (
+        (SELECT auth.uid()) = user_id
+        OR (SELECT auth.uid()) IN (SELECT member_id FROM public.team_members WHERE owner_id = queries.user_id)
+    );
+
+DROP POLICY IF EXISTS "Users can manage own platform API keys" ON public.platform_api_keys;
+CREATE POLICY "Users can manage own platform API keys" ON public.platform_api_keys
+    FOR ALL USING (
+        (SELECT auth.uid()) = user_id
+        OR (SELECT auth.uid()) IN (SELECT member_id FROM public.team_members WHERE owner_id = platform_api_keys.user_id)
+    );
+
+-- Lets a member read the owner's profile (plan/credits/default_mode/
+-- enabled_skills) -- this one is NOT just defense in depth, unlike the
+-- policies above: AuthProvider.fetchProfile() is a real direct client-side
+-- read using the browser's own (anon/authenticated) Supabase client, so a
+-- member genuinely needs this grant to see their effective plan/credits in
+-- their own dashboard. The UPDATE policy below is deliberately left
+-- untouched (owner-only) -- Postgres RLS has no per-column granularity, so a
+-- blanket member-write grant here would also let a member rewrite
+-- plan/credits/is_active on the owner's row. A member's preference writes
+-- (default_mode/enabled_skills only) go through /api/account/preferences
+-- instead, a service-role route with an explicit TypeScript field allowlist.
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
+CREATE POLICY "Users can view own profile" ON public.profiles
+    FOR SELECT USING (
+        (SELECT auth.uid()) = id
+        OR (SELECT auth.uid()) IN (SELECT member_id FROM public.team_members WHERE owner_id = profiles.id)
+    );
+
+-- Records which real person ran a query when queries.user_id has been
+-- resolved to a team tenant (the owner) rather than the acting session --
+-- purely for "asked by Jane" attribution in a shared team analytics view.
+-- Always set by the query route, even for a solo owner with no team, so the
+-- UI never needs a null-check special case.
+ALTER TABLE public.queries ADD COLUMN IF NOT EXISTS actor_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS idx_queries_actor_id ON public.queries(actor_id);
+
 -- Storage buckets (run in Supabase Dashboard > Storage)
 -- INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 -- VALUES 

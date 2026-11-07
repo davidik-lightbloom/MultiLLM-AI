@@ -45,7 +45,7 @@ const STAGE_LABELS: Record<string, string> = {
 const LOCAL_ONLY_STORAGE_KEY = "multillm_local_only_mode";
 
 export default function HomePage() {
-  const { user, updateProfile } = useAuth();
+  const { user, updatePreferences } = useAuth();
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<
     | null
@@ -126,8 +126,10 @@ export default function HomePage() {
 
   // Feature 4: local-only mode is a per-user preference -- persisted on the
   // profile row for a logged-in user (works in both demo and real Supabase
-  // mode, since useAuth().updateProfile already handles both), or
-  // localStorage for an anonymous visitor who has no profile row at all.
+  // mode, since useAuth().updatePreferences already handles both -- and
+  // resolves a team member's write to their team owner's shared tenant
+  // settings), or localStorage for an anonymous visitor who has no profile
+  // row at all.
   useEffect(() => {
     if (user) {
       setLocalOnly(Boolean(user.profile?.local_only_mode));
@@ -143,7 +145,7 @@ export default function HomePage() {
     setLocalOnly(checked);
     if (user) {
       try {
-        await updateProfile({ local_only_mode: checked });
+        await updatePreferences({ local_only_mode: checked });
       } catch {
         toast.error("Couldn't save local-only mode preference");
       }
@@ -156,7 +158,7 @@ export default function HomePage() {
     setMode(next);
     if (user) {
       try {
-        await updateProfile({ default_mode: next });
+        await updatePreferences({ default_mode: next });
       } catch {
         toast.error("Couldn't save mode preference");
       }

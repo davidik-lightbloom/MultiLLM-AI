@@ -16,7 +16,7 @@ import DashboardHeader from "@/components/layout/dashboard-header";
 // deletion, and this page's own editing flow are the only parts of
 // Profile/Security that do anything real.
 export default function SettingsPage() {
-  const { user, demoMode, refreshUser, updateProfile, logout } = useAuth();
+  const { user, demoMode, refreshUser, updateProfile, updatePreferences, teamRole, logout } = useAuth();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState(user?.user_metadata?.name || user?.profile?.name || "");
@@ -52,7 +52,7 @@ export default function SettingsPage() {
     const next = wantsDeep ? "deep" : "fast";
     setAiMode(next);
     try {
-      await updateProfile({ default_mode: next });
+      await updatePreferences({ default_mode: next });
     } catch {
       toast.error("Couldn't save mode preference");
     }
@@ -64,7 +64,7 @@ export default function SettingsPage() {
       : [...enabledSkills, skill];
     setEnabledSkills(next);
     try {
-      await updateProfile({ enabled_skills: next });
+      await updatePreferences({ enabled_skills: next });
     } catch {
       toast.error("Couldn't save skills preference");
     }
@@ -235,10 +235,15 @@ export default function SettingsPage() {
               transition={{ duration: 0.5, delay: 0.15 }}
               className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8"
             >
-              <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-slate-900 mb-2 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-purple-600" />
                 AI Behavior
               </h2>
+              {teamRole !== "owner" && (
+                <p className="text-xs text-slate-400 mb-4">
+                  These settings are shared across your whole team -- changing them here changes the default for everyone.
+                </p>
+              )}
 
               <div className="flex items-center justify-between py-3 border-b border-slate-100">
                 <div>

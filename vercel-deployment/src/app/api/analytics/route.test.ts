@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   getQueries: vi.fn(),
   getQueryStats: vi.fn(),
   isDemoMode: vi.fn(),
+  getTeamContext: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/serverAuth", () => ({
@@ -18,6 +19,9 @@ vi.mock("@/lib/supabase/services", () => ({
 vi.mock("@/lib/demoMode", () => ({
   isDemoMode: mocks.isDemoMode,
 }));
+vi.mock("@/lib/supabase/team", () => ({
+  getTeamContext: mocks.getTeamContext,
+}));
 
 import { GET } from "./route";
 
@@ -29,6 +33,19 @@ describe("GET /api/analytics", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.isDemoMode.mockReturnValue(false);
+    mocks.getTeamContext.mockImplementation(async (userId: string) => ({ tenantId: userId, role: "owner" }));
+  });
+
+  it("reads a team member's analytics from their team owner's tenant id", async () => {
+    mocks.getAuthenticatedUserId.mockResolvedValue("member-1");
+    mocks.getTeamContext.mockResolvedValue({ tenantId: "owner-1", role: "member" });
+    mocks.getQueries.mockResolvedValue([]);
+    mocks.getQueryStats.mockResolvedValue({ totalQueries: 0, totalCreditsUsed: 0, avgLatency: 0, totalCarbonSaved: 0 });
+
+    await GET(getRequest());
+
+    expect(mocks.getQueries).toHaveBeenCalledWith("owner-1", 500, 0);
+    expect(mocks.getQueryStats).toHaveBeenCalledWith("owner-1");
   });
 
   it("returns a zeroed-out, valid shape in demo mode instead of 401ing", async () => {

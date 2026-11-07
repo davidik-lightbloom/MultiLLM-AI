@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   getPlatformApiKeyById: vi.fn(),
   deletePlatformApiKey: vi.fn(),
   isDemoMode: vi.fn(),
+  getTeamContext: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/serverAuth", () => ({
@@ -18,6 +19,10 @@ vi.mock("@/lib/supabase/services", () => ({
 vi.mock("@/lib/demoMode", () => ({
   isDemoMode: mocks.isDemoMode,
 }));
+vi.mock("@/lib/supabase/team", () => ({
+  getTeamContext: mocks.getTeamContext,
+  isTeamManager: (role: string) => role === "owner" || role === "admin",
+}));
 
 import { DELETE } from "./route";
 
@@ -29,6 +34,17 @@ describe("DELETE /api/api-keys/[id]", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.isDemoMode.mockReturnValue(false);
+    mocks.getTeamContext.mockImplementation(async (userId: string) => ({ tenantId: userId, role: "owner" }));
+  });
+
+  it("refuses revocation for a plain team member (not owner/admin)", async () => {
+    mocks.getAuthenticatedUserId.mockResolvedValue("member-1");
+    mocks.getTeamContext.mockResolvedValue({ tenantId: "owner-1", role: "member" });
+
+    const res = await DELETE(new NextRequest("http://localhost/api/api-keys/k1"), params("k1"));
+
+    expect(res.status).toBe(403);
+    expect(mocks.getPlatformApiKeyById).not.toHaveBeenCalled();
   });
 
   it("refuses to revoke a key in demo mode", async () => {
